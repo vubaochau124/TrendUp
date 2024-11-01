@@ -3,10 +3,12 @@
 
 # Install
 Front-end
-```npm create vite@latest
+```
+npm create vite@latest
 > react
 > javascript
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
 npm install react-router-dom
 npm run dev
+```
