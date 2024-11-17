@@ -8,3 +8,8 @@ Front-end
 npm install vite
 npm run dev
 ```
+Back-end
+```
+npm install cors dotenv express jsonwebtoken mysql2 multer nodemon razorpay stripe validator cloudinary bcrypt
+npm run server
+```
