@@ -1,56 +1,151 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import { assets } from '../assets/assets'
 
+// Component MenuItem để xử lý submenu
+const MenuItem = ({ item, isSubRoute }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    // Đóng submenu nếu không ở trong route của nó
+    if (!location.pathname.includes(item.route)) {
+      setIsOpen(false);
+    }
+  }, [location.pathname, item.route]);
+
+  const toggleSubmenu = (e) => {
+    e.preventDefault();
+    setIsOpen(!isOpen);
+  };
+
+  // Nếu item có submenu
+  if (item.submenu) {
+    return (
+      <>
+        <div>
+          <button
+            onClick={toggleSubmenu}
+            className="menu-btn"
+          >
+            <p className='hidden md:block'>{item.title}</p>
+            <span className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+              ▼
+            </span>
+          </button>
+
+          <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-48' : 'max-h-0'}`}>
+            {item.submenu.map((subItem, index) => (
+              <NavLink
+                key={index}
+                to={`${item.route}/${subItem.route}`}
+                className={({ isActive }) =>
+                  `submenu-item ${isActive ? 'active' : ''}`
+                }
+              >
+                {subItem.title}
+              </NavLink>
+            ))}
+          </div>
+        </div>
+        <hr />
+      </>
+    )
+  }
+
+  // Nếu là menu bình thường
+  return (
+    <>
+      <NavLink
+        className={({ isActive }) => `sidebar-item ${isActive && !isSubRoute ? 'active' : ''}`}
+        to={item.route}
+      >
+        <p className='hidden md:block'>{item.title}</p>
+      </NavLink>
+      <hr />
+    </>
+  )
+}
+
 const Sidebar = () => {
+  const location = useLocation();
+
+  // Cấu trúc menu data
+  const menuItems = [
+    {
+      title: 'Home',
+      route: '/Home'
+    },
+    {
+      title: 'Employee Management',
+      route: '/Employee'
+    },
+    {
+      title: 'Customer Management',
+      route: '/Customer'
+    },
+    {
+      title: 'Order Management',
+      route: '/order_manage',
+      submenu: [
+        { title: 'Order list', route: 'list' },
+        { title: 'Order detail', route: 'detail' }
+      ]
+    },
+    {
+      title: 'Product Management',
+      route: '/product_manage',
+      submenu: [
+        { title: 'Add product', route: 'add' },
+        { title: 'View product list', route: 'list' }
+      ]
+    },
+    {
+      title: 'Category Management',
+      route: '/category_manage',
+      submenu: [
+        { title: 'Add category', route: 'add' },
+        { title: 'Edit category', route: 'edit' },
+        { title: 'Category list', route: 'list' }
+      ]
+    },
+    {
+      title: 'Inventory Management',
+      route: '/Inventory'
+    },
+    {
+      title: 'Inventory Import Management',
+      route: '/import_manage',
+      submenu: [
+        { title: 'Import management', route: 'manage' },
+        { title: 'Import detail', route: 'detail' }
+      ]
+    },
+    {
+      title: 'Inventory Export Management',
+      route: '/export_manage',
+      submenu: [
+        { title: 'Export management', route: 'manage' },
+        { title: 'Export detail', route: 'detail' }
+      ]
+    }
+  ];
+
+  // Kiểm tra xem có đang ở route của submenu nào không
+  const isSubRoute = menuItems
+    .filter(item => item.submenu)
+    .some(item => location.pathname.includes(item.route));
+
   return (
     <div className='w-[18%] min-h-screen border-r-2'>
       <div className='flex flex-col gap-1 pt-1 pl-[5%] pr-[5%] text-[15px]'>
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="/Home">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Trang chủ </p>
-        </NavLink>
-        <hr />
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="/Employee">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Quản lý nhân viên </p>
-        </NavLink>
-        <hr />
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="/Customer">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Quản lý khách hàng </p>
-        </NavLink>
-        <hr />
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="/order_manage/Order">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Quản lý đơn hàng </p>
-        </NavLink>
-        <hr />
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="/product_manage/Product">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Quản lý sản phẩm </p>
-        </NavLink>
-        <hr />
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="/category_manage/Category">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Quản lý danh mục </p>
-        </NavLink>
-        <hr />
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="Inventory">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Quản lý tồn kho </p>
-        </NavLink>
-        <hr />
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="/import_manage/Import">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Quản lý nhập kho </p>
-        </NavLink>
-        <hr />
-        <NavLink className='flex items-center gap-3 px-3 py-2' to="/export_manage/Export">
-            {/* <img className='w-5 h-5' src={assets.menu_icon}/> */}
-            <p className='hidden md:block'>Quản lý xuất kho </p>
-        </NavLink>
-        <hr />
+        {menuItems.map((item, index) => (
+          <MenuItem
+            key={index}
+            item={item}
+            isSubRoute={isSubRoute}
+          />
+        ))}
       </div>
     </div>
   )
