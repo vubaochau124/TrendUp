@@ -86,23 +86,23 @@ const Sidebar = () => {
     },
     {
       title: 'Order Management',
-      route: '/order_manage',
+      route: '/Order_manage',
     },
     {
       title: 'Product Management',
-      route: '/product_manage',
+      route: '/Product_manage',
       submenu: [
-        { title: 'Add product', route: 'add' },
-        { title: 'View product list', route: 'list' }
+        { title: 'Product list', route: 'List' },
+        { title: 'Add product', route: 'Add' }
       ]
     },
     {
       title: 'Category Management',
-      route: '/category_manage',
+      route: '/Category_manage',
       submenu: [
-        { title: 'Add category', route: 'add' },
-        { title: 'Edit category', route: 'edit' },
-        { title: 'Category list', route: 'list' }
+        { title: 'Category list', route: 'List' },
+        { title: 'Add category', route: 'Add' },
+        { title: 'Edit category', route: 'Edit' }
       ]
     },
     {
@@ -111,11 +111,11 @@ const Sidebar = () => {
     },
     {
       title: 'Import Management',
-      route: '/import_manage',
+      route: '/Import_manage',
     },
     {
       title: 'Export Management',
-      route: '/export_manage',
+      route: '/Export_manage',
     }
   ];
 
