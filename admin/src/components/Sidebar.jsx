@@ -87,10 +87,6 @@ const Sidebar = () => {
     {
       title: 'Order Management',
       route: '/order_manage',
-      submenu: [
-        { title: 'Order list', route: 'list' },
-        { title: 'Order detail', route: 'detail' }
-      ]
     },
     {
       title: 'Product Management',
@@ -114,20 +110,12 @@ const Sidebar = () => {
       route: '/Inventory'
     },
     {
-      title: 'Inventory Import Management',
+      title: 'Import Management',
       route: '/import_manage',
-      submenu: [
-        { title: 'Import management', route: 'manage' },
-        { title: 'Import detail', route: 'detail' }
-      ]
     },
     {
-      title: 'Inventory Export Management',
+      title: 'Export Management',
       route: '/export_manage',
-      submenu: [
-        { title: 'Export management', route: 'manage' },
-        { title: 'Export detail', route: 'detail' }
-      ]
     }
   ];
 
