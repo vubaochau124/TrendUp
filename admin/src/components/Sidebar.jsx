@@ -86,27 +86,23 @@ const Sidebar = () => {
     },
     {
       title: 'Order Management',
-      route: '/order_manage',
-      submenu: [
-        { title: 'Order list', route: 'list' },
-        { title: 'Order detail', route: 'detail' }
-      ]
+      route: '/Order_manage',
     },
     {
       title: 'Product Management',
-      route: '/product_manage',
+      route: '/Product_manage',
       submenu: [
-        { title: 'Add product', route: 'add' },
-        { title: 'View product list', route: 'list' }
+        { title: 'Product list', route: 'List' },
+        { title: 'Add product', route: 'Add' }
       ]
     },
     {
       title: 'Category Management',
-      route: '/category_manage',
+      route: '/Category_manage',
       submenu: [
-        { title: 'Add category', route: 'add' },
-        { title: 'Edit category', route: 'edit' },
-        { title: 'Category list', route: 'list' }
+        { title: 'Category list', route: 'List' },
+        { title: 'Add category', route: 'Add' },
+        { title: 'Edit category', route: 'Edit' }
       ]
     },
     {
@@ -114,20 +110,12 @@ const Sidebar = () => {
       route: '/Inventory'
     },
     {
-      title: 'Inventory Import Management',
-      route: '/import_manage',
-      submenu: [
-        { title: 'Import management', route: 'manage' },
-        { title: 'Import detail', route: 'detail' }
-      ]
+      title: 'Import Management',
+      route: '/Import_manage',
     },
     {
-      title: 'Inventory Export Management',
-      route: '/export_manage',
-      submenu: [
-        { title: 'Export management', route: 'manage' },
-        { title: 'Export detail', route: 'detail' }
-      ]
+      title: 'Export Management',
+      route: '/Export_manage',
     }
   ];
 
