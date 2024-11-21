@@ -17,6 +17,8 @@ import Inventory from './pages/Inventory'
 import Import_manage from './pages/import_manage/Import_manage'
 import Export_manage from './pages/export_manage/Export_manage'
 
+export const currency ='$'
+
 const App = () => {
 
   const [token, setToken] = useState(' ');
