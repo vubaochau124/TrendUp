@@ -8,7 +8,7 @@
 }
 
 select,input,textarea {
-    border: 1px solid #acebdd;
+    border: 2px solid #acebdd;
     outline-color: darkcyan;
     border-radius: 4px;
 }
@@ -36,3 +36,7 @@ select,input,textarea {
 .submenu-item {
     @apply block pl-8 py-1.5 text-[13px] hover:bg-[#acebdd] transition-colors;
 }
+
+img {
+    cursor: pointer;
+  }
