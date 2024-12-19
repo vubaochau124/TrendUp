@@ -3,8 +3,8 @@ import cors from 'cors'
 import 'dotenv/config'
 import connectCloudinary from './config/cloudinary.js'
 import userRouter from './routes/userRoute.js'
-import productRouter from '.routes/productRouter.js'
-import cartRouter from '.routes/cartRouter.js'
+import productRouter from './routes/productRoute.js'
+import cartRouter from './routes/cartRoute.js'
 import orderRouter from './routes/orderRoute.js'
 
 import products from './models/productsModel.js'
@@ -15,7 +15,7 @@ import users from './models/customersModel.js'
 const app = express()
 const port = process.env.PORT || 4000
 
-connecCloudinary()
+connectCloudinary()
 
 //middleware
 app.use(express.json())
@@ -36,12 +36,4 @@ app.listen(port, () => console.log(`Server is running on port ${port}`))
 
 
 
-// async function getNotes() {
-//     const [result] = await pool.query("SELECT * FROM Sizes")
-//     return result
-// }
-
-// const notes = await getNotes()
-
-// console.log(notes)
 
