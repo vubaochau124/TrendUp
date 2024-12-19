@@ -93,7 +93,8 @@ const Sidebar = () => {
       route: '/Product_manage',
       submenu: [
         { title: 'Product list', route: 'List' },
-        { title: 'Add product', route: 'Add' }
+        { title: 'Add product', route: 'Add' },
+        //{ title: 'Edit product', route: 'Edit' }
       ]
     },
     {
@@ -102,7 +103,7 @@ const Sidebar = () => {
       submenu: [
         { title: 'Category list', route: 'List' },
         { title: 'Add category', route: 'Add' },
-        { title: 'Edit category', route: 'Edit' }
+        // { title: 'Edit category', route: 'Edit' }
       ]
     },
     {
