@@ -12,3 +12,4 @@ const connecCloudinary = async () => {
 }
 
 export default connecCloudinary
+
