@@ -6,6 +6,7 @@ import products from './models/productsModel.js'
 import sizes from './models/sizesModel.js'
 import userRouter from './routes/userRoute.js'
 import productRouter from './routes/productRoute.js'
+import users from './models/customersModel.js'
 
 
 //app config
