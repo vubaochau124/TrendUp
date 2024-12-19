@@ -1,4 +1,6 @@
 import {v2 as cloudinary} from 'cloudinary'
+import connectDB from '../config/mysqlDB.js'
+import products from '../models/productsModel.js'
 
 // function for add product
 const addProduct = async (req, res) => {
@@ -18,10 +20,29 @@ const addProduct = async (req, res) => {
                 return result.secure_url
             })
         )
-        console.log(name, description, price, persontype, productstyle, sized, bestseller)
-        console.log(imagesUrl)
+        const imagesUrl_text = imagesUrl.join(";");
+        console.log(req.files)
+        let bestseller_value = "0"
+        if (bestseller === true){
+            bestseller_value = "1"
+        }
+        const [product] = await connectDB.query("INSERT INTO products \
+            (name, description, price, person_type_name, product_style_name, images, bestseller) \
+             VALUES (?, ?, ?, ?, ?, ?, ?);", 
+             [name, description, price, persontype, productstyle, imagesUrl_text, bestseller_value])
+        
+        const list_sizes = JSON.parse(sized)
+        const product_id = product.insertId
+        for (let i = 0; i < list_sizes.length; i++) {
+            await connectDB.query("INSERT INTO inventory \
+                (product_id, size, quantity) \
+                 VALUES (?, ?, ?);", [product_id, list_sizes[i], 0])
+        }
 
-        res.json({})
+
+        console.log(name, description, price, persontype, productstyle, sized, bestseller)
+
+        res.json({sucess:true,message:"Product Added"})
 
 
     } catch (error) {
@@ -32,7 +53,13 @@ const addProduct = async (req, res) => {
 
 // function for list product
 const listProduct = async (req, res) => {
-
+    try {
+        const list_products = await products();
+        res.json({sucess:true, list_products})
+    } catch (error){
+        console.log(error)
+        res.json({sucess:false, message:error.message})
+    }
 }
 
 // function for edit product
@@ -42,12 +69,24 @@ const editProduct = async (req, res) => {
 
 // function for remove product
 const removeProduct = async (req, res) => {
-
+    try {
+        connectDB.query("DELETE FROM products WHERE product_id = ?;", [req.body.id]);
+        res.json({sucess:true, message: req.body.id})
+    } catch (error){
+        console.log(error)
+        res.json({sucess:false, message:error.message})
+    }
 }
 
-// function for remove product
+// function for single product
 const singleProduct = async (req, res) => {
-
+    try {
+        connectDB.query("SELECT * FROM products WHERE product_id = ?;", [req.body.id]);
+        res.json({sucess:true, message: req.body.id})
+    } catch (error){
+        console.log(error)
+        res.json({sucess:false, message:error.message})
+    }
 }
 
 export { listProduct, addProduct, editProduct, removeProduct, singleProduct}
