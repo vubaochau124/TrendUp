@@ -1,10 +1,11 @@
 import express from 'express';
-import {loginAdmin, loginUser, registerUser} from '../controllers/userController.js';
+import {loginEmployee, loginUser, registerEmployee, registerUser} from '../controllers/userController.js';
 
 const userRouter = express.Router();
 
 userRouter.post('/register', registerUser)
 userRouter.post('/login', loginUser)
-userRouter.post('/admin', loginAdmin)
+userRouter.post('/employee', loginEmployee)
+userRouter.post('/addemployee', registerEmployee)
 
 export default userRouter;

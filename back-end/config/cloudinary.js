@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config(); // Đọc các biến môi trường từ file .env
 
-const connecCloudinary = async () => {
+const connectCloudinary = async () => {
     cloudinary.config({
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
@@ -11,4 +11,4 @@ const connecCloudinary = async () => {
     });
 }
 
-export default connecCloudinary
+export default connectCloudinary

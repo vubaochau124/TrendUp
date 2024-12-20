@@ -59,7 +59,7 @@ const listProduct = async (req, res) => {
 // function for edit product
 const editProduct = async (req, res) => {
     try {
-        const productId = req.params.product_id;
+        const productId = req.params.id;
         const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
 
         const updatedProduct = await productModel.update(
@@ -73,7 +73,7 @@ const editProduct = async (req, res) => {
                 bestseller: bestseller === 'true' ? true : false
             },
             {
-                where: { product_id: productId }
+                where: { id: productId }
             }
         );
 
@@ -91,9 +91,9 @@ const editProduct = async (req, res) => {
 // function for remove product
 const removeProduct = async (req, res) => {
     try {
-        const productId = req.body.product_id;
+        const productId = req.body.id;
         const result = await productModel.destroy({
-            where: { product_id: productId }
+            where: { id: productId }
         });
 
         if (result) {
@@ -110,13 +110,13 @@ const removeProduct = async (req, res) => {
 // function for remove product
 const singleProduct = async (req, res) => {
     try {
-        const productId = req.body.product_id;
+        const productId = req.body.id;
         if (!productId) {
             return res.json({ success: false, message: 'Product ID is required' });
         }
 
         const product = await productModel.findOne({
-            where: { product_id: productId }
+            where: { id: productId }
         });
 
         if (product) {

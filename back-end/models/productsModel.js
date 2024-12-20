@@ -12,7 +12,7 @@ const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_US
 
 // Define the Product model
 const productModel = sequelize.define('Product', {
-    product_id: {
+    id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
