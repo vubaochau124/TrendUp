@@ -95,7 +95,7 @@ const loginAdmin = async (req,res) => {
             } 
         }
         if (isemail === false && ispassword === false) {
-            res.json({sucess:false, message: process.env.JWT_SECRET})
+            res.json({sucess:false, message: 'Invalid credentials'})
         }
         
     } catch (error){
