@@ -10,6 +10,10 @@ import orderRouter from './routes/orderRoute.js'
 import products from './models/productsModel.js'
 import sizes from './models/sizesModel.js'
 import users from './models/customersModel.js'
+import categotyRouter from './routes/catergoriesRoute.js'
+import employeeRouter from './routes/employeeRoute.js'
+import customerRouter from './routes/customerRoute.js'
+import inventoryRouter from './routes/inventoryRoute.js'
 
 //app config
 const app = express()
@@ -25,8 +29,12 @@ app.use(cors())
 
 app.use('/api/user',userRouter)
 app.use('/api/product', productRouter)
-app.use('api/cart', cartRouter)
-app.use('api/order', orderRouter)
+app.use('/api/cart', cartRouter)
+app.use('/api/order', orderRouter)
+app.use('/api/categories', categotyRouter)
+app.use('/api/employee', employeeRouter)
+app.use('/api/customer', customerRouter)
+app.use('/api/inventory', inventoryRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello World')

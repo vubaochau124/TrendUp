@@ -9,6 +9,7 @@ const connectDB = await mysql.createPool({
             port: process.env.MYSQL_PORT,
             password: process.env.MYSQL_PASSWORD, // Mật khẩu
             database: process.env.MYSQL_DATABASE,  // Tên cơ sở dữ liệu
+            timezone: 'Z',
         }).promise()
         
 export default connectDB
