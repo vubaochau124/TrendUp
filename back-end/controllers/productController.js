@@ -47,22 +47,87 @@ const addProduct = async (req, res) => {
 
 // function for list product
 const listProduct = async (req, res) => {
-
+    try {
+        const products = await productModel.findAll();
+        res.json({ success: true, products});
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
 }
 
 // function for edit product
 const editProduct = async (req, res) => {
+    try {
+        const productId = req.params.product_id;
+        const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
 
+        const updatedProduct = await productModel.update(
+            {
+                name,
+                description,
+                price,
+                category,
+                subCategory,
+                sizes,
+                bestseller: bestseller === 'true' ? true : false
+            },
+            {
+                where: { product_id: productId }
+            }
+        );
+
+        if (updatedProduct[0]) {
+            res.json({ success: true, message: 'Product has been updated' });
+        } else {
+            res.json({ success: false, message: 'Product not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
 }
 
 // function for remove product
 const removeProduct = async (req, res) => {
+    try {
+        const productId = req.body.product_id;
+        const result = await productModel.destroy({
+            where: { product_id: productId }
+        });
 
+        if (result) {
+            res.json({ success: true, message: 'Product has been removed' });
+        } else {
+            res.json({ success: false, message: 'Product not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
 }
 
 // function for remove product
 const singleProduct = async (req, res) => {
+    try {
+        const productId = req.body.product_id;
+        if (!productId) {
+            return res.json({ success: false, message: 'Product ID is required' });
+        }
 
+        const product = await productModel.findOne({
+            where: { product_id: productId }
+        });
+
+        if (product) {
+            res.json({ success: true, product });
+        } else {
+            res.json({ success: false, message: 'Product not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
 }
 
 export { listProduct, addProduct, editProduct, removeProduct, singleProduct}
