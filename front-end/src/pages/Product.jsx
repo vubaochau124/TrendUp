@@ -13,9 +13,10 @@ const Product = () => {
   
   const fetchProductData = async() => {
     products.map(item => {
-      if(item.id === productId){
+      if(item.id === parseInt(productId)){
         setProductData(item)
         setImage(item.image[0])
+        console.log(item)
         return null;
       }
     })

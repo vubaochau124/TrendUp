@@ -49,10 +49,6 @@ const productModel = sequelize.define('Product', {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
-    // date: {
-    //     type: DataTypes.INTEGER,
-    //     allowNull: false
-    // }
 }, {
     tableName: 'products', // Specify the table name
     timestamps: false // Disable automatic timestamps

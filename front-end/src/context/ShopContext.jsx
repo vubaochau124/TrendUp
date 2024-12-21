@@ -40,11 +40,22 @@ const ShopContextProvider = (props) => {
 
         if (token) {
             try {
-                await axios.post('http://localhost:4000' + '/api/cart/add', {itemId, size}, {headers:{token}});
+                const response = await axios.post(
+                    'http://localhost:4000/api/cart/add',
+                    { itemId, size },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                console.log(response.data);
             } catch (error) {
                 console.log(error);
                 toast.error(error.message);
             }
+        } else {
+            toast.error('User not authenticated');
         }
     }
 
@@ -69,12 +80,55 @@ const ShopContextProvider = (props) => {
         
         cartData[itemId][size] = quantity;
         setCartItems(cartData);
+
+        if (token) {
+            try {
+                const response = await axios.post(
+                    'http://localhost:4000/api/cart/update',
+                    { itemId, size, quantity },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                console.log(response.data);
+            } catch (error) {
+                console.log(error);
+                toast.error(error.message);
+            }
+        } else {
+            toast.error('User not authenticated');
+        }
+    }
+
+    const getUserCart = async (token) => {
+        try {
+            const response = await axios.post(
+                'http://localhost:4000/api/cart/get',
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            if (response.data.success) {
+                setCartItems(response.data.cartData);
+            } else {
+                console.log(response.data.message);
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error('An error occurred. Please try again.');
+        }
     }
 
     const getCartAmount = async => {
         let totalAmount = 0;
         for(const items in cartItems) {
-            let itemInfo = products.find(product => product.id === items);
+            let itemInfo = products.find(product => product.id === parseInt(items));
             for(const item in cartItems[items]) {
                 try {
                     if (cartItems[items][item] > 0) {
@@ -93,7 +147,6 @@ const ShopContextProvider = (props) => {
             const response = await axios.get('http://localhost:4000' + '/api/product/list');
             if(response.data.success) {
                 setProducts(response.data.products);
-                console.log(response.data.products);
             } else {
                 console.log(response.data.message);
                 toast.error(response.data.message);
@@ -109,8 +162,9 @@ const ShopContextProvider = (props) => {
     } ,[])
 
     useEffect(() => {
-        if (!token && !localStorage.getItem('token')) {
+        if (!token && localStorage.getItem('token')) {
             setToken(localStorage.getItem('token'));
+            getUserCart(localStorage.getItem('token'));
         }
     }, [])
 

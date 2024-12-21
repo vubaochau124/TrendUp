@@ -1,20 +1,22 @@
 import jwt from 'jsonwebtoken';
 
 const authUser = async (req, res, next) => {
-    const {token} = req.headers;
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
-        return res.status(401).json({message: 'Unauthorized'});
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Unauthorized' });
     }
+
+    const token = authHeader.split(' ')[1];
 
     try {
         const token_decode = jwt.verify(token, process.env.JWT_SECRET);
-        req.body.userd = token_decode.id;
+        req.body.userId = token_decode.id; // Corrected from userd to userId
         next();
     } catch (error) {
         console.log(error);
-        res.json({success: false, message: error.message});
+        res.status(401).json({ success: false, message: 'Invalid token' });
     }
-}
+};
 
-export {authUser};
+export { authUser };

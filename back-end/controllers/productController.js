@@ -32,7 +32,7 @@ const addProduct = async (req, res) => {
             image: imagesUrl, // Ensure image is stored as JSON
             category,
             subCategory,
-            sizes, // Ensure sizes is stored as JSON
+            sizes: sizes.split(','), // Convert string to array
             bestseller: bestseller === 'true' ? true : false, // Convert string to boolean
             // date: new Date().getFullYear() // Assuming you want to store the current year
         });
