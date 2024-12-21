@@ -20,6 +20,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/ReactToastify.css'
 import Employee_edit from './pages/employee_manage/Employee_edit.jsx'
 import Employee_add from './pages/employee_manage/Employee_add.jsx'
+import Order_detail from './pages/order_manage/Order_detail.jsx'
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
 
@@ -52,6 +53,7 @@ const App = () => {
                 <Route path='/Employee_manage/Edit/:employee_id' element={<Employee_edit token={token}/>} />
                 <Route path='/Customer' element={<Customer token={token}/>} />
                 <Route path='/Order_manage' element={<Order token={token}/>} />
+                <Route path='/Order_detail/:id' element={<Order_detail token={token}/>} />
                 <Route path='/Product_manage/List' element={<Product token={token}/>} />
                 <Route path='/Product_manage/Add' element={<Product_add token={token}/>} />
                 <Route path='/Product_manage/Edit/:product_id' element={<Product_edit token={token}/>} />

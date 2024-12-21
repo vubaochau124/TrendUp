@@ -55,7 +55,6 @@ const Employee = () => {
           <b className='text-center'>Action</b>
         </div>
 
-        {/* -------------- Category List ---------------- */}
         {
           listEmployee.map((item, index) => (
             <div 

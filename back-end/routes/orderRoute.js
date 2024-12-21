@@ -1,13 +1,21 @@
 import express from 'express';
-import { placeOrder, placeOrderPaypal, allOrders, userOrders, updateStatus } from '../controllers/orderController.js';
+import { 
+    getAllOrders, 
+    updateOrderStatus,
+    getOrderById,
+    placeOrder, 
+    placeOrderPaypal, 
+    userOrders, 
+} from '../controllers/orderController.js';
 import adminAuth from '../middleware/adminAuth.js';
 import { authUser } from '../middleware/auth.js';
 
 const orderRouter = express.Router();
 
 //admin
-orderRouter.post('/list',adminAuth, allOrders);
-orderRouter.post('/status',adminAuth, updateStatus);
+orderRouter.get('/orders', getAllOrders);
+orderRouter.post('/status', updateOrderStatus);
+orderRouter.get('/:id', getOrderById);
 
 //payment
 orderRouter.post('/paypal', authUser, placeOrderPaypal);

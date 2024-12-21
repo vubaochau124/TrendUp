@@ -47,16 +47,12 @@ const placeOrderPaypal = async (req, res) => {
 
 }
 
-const allOrders = async (req, res) => {
-
-}
-
 const userOrders = async (req, res) => {
     try {
         const userId = req.userId; // Get userId from the request object
-
+        
         const orders = await orderModel.findAll({ where: { userId } });
-
+        
         res.json({ success: true, orders });
     } catch (error) {
         console.log(error);
@@ -64,8 +60,50 @@ const userOrders = async (req, res) => {
     }
 }
 
-const updateStatus = async (req, res) => { 
+////////////////////////////
+//////////ADMIN/////////////
+////////////////////////////
 
+// fetch all orders from the database
+const getAllOrders = async (req, res) => {
+    try {
+        const orders = await orderModel.findAll();
+        res.json({ success: true, orders });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
 }
 
-export { placeOrder, placeOrderPaypal, allOrders, userOrders, updateStatus }
+const updateOrderStatus = async (req, res) => { 
+    try {
+        const { orderId, status } = req.body;
+        const order = await orderModel.findByPk(orderId);
+        if (order) {
+            await order.update({ status });
+            res.json({ success: true, message: `Order ${orderId} status updated to ${status}` });
+        } else {
+            res.status(404).json({ success: false, message: 'Order not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+const getOrderById = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const order = await orderModel.findByPk(orderId);
+        if (order) {
+            res.json({ success: true, order });
+        } else {
+            res.status(404).json({ success: false, message: 'Order not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export { placeOrder, placeOrderPaypal, getAllOrders, userOrders, updateOrderStatus, getOrderById }

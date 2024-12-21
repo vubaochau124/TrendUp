@@ -86,10 +86,6 @@ const Sidebar = () => {
       ]
     },
     {
-      title: 'Customer Management',
-      route: '/Customer'
-    },
-    {
       title: 'Order Management',
       route: '/Order_manage',
     },

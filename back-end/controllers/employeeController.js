@@ -9,7 +9,6 @@ const getEmployees = async (req, res) => {
             where: { employee_id: { [Op.ne]: 1 } },
             attributes: { exclude: ['password'] }
         });
-        console.log(employees);
         res.json({ success: true, employees });
     } catch (error) {
         console.log(error);
