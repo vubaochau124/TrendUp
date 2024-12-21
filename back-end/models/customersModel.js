@@ -1,7 +1,7 @@
 import mysql from 'mysql2'
 import connectDB from '../config/mysqlDB.js';
 
-const users = async () => {
+const customers = async () => {
     try {
         const [result] = await connectDB.query("SELECT * FROM customers")
         console.log('Lấy danh sách sản phẩm thành công!');
@@ -12,4 +12,4 @@ const users = async () => {
     }
 }
 
-export default users
+export default customers

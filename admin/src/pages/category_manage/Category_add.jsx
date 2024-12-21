@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { backendUrl } from '../../App';
 import { assets } from '../../assets/assets';
-//import {backendUrl} from '../App.js'
+import { toast } from 'react-toastify';
+
 
 const Category_add = () => {
-  const [image, setImage] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   
@@ -14,16 +15,23 @@ const Category_add = () => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
-
-      // Thêm dữ liệu biểu mẫu
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("categoryType", categoryType);
-
       // Gửi yêu cầu POST đến backend
-      const response = await axios.post(backendUrl + "/api/category/add", formData);
-      console.log(response.data);
+      if (categoryType === "Wearer"){
+        const response = await axios.post(backendUrl + "/api/categories/addwearer",{name, description});
+        if (response.data.sucess){
+          toast.success(response.data.message)
+        } else {
+          toast.error(response.data.message)
+        }
+      }
+      if (categoryType === "Style"){
+        const response = await axios.post(backendUrl + "/api/categories/addstyle", {name, description});
+        if (response.data.sucess){
+          toast.success(response.data.message)
+        } else {
+          toast.error(response.data.message)
+        }
+      }
 
     } catch (error) {
       console.error("Lỗi khi thêm danh mục:", error);

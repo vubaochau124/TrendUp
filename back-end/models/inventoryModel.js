@@ -1,15 +1,15 @@
 import mysql from 'mysql2'
 import connectDB from '../config/mysqlDB.js';
 
-const importorders = async () => {
+const inventory = async () => {
     try {
-        const [result] = await connectDB.query("SELECT * FROM importorders")
-        console.log('Lấy danh sách importorders thành công!');
+        const [result] = await connectDB.query("SELECT * FROM inventory")
+        console.log('Lấy danh sách inventory thành công!');
         return result; // Trả về kết nối nếu thành công
     } catch (error) {
-        console.error('Lỗi không lấy được danh sách importorders:', error.message);
+        console.error('Lỗi không lấy được danh sách inventory:', error.message);
         throw error; // Quăng lỗi để xử lý ở nơi khác
     }
 }
 
-export default importorders
+export default inventory

@@ -2,18 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { toast } from 'react-toastify';
-import { backendUrl } from '../App';
+import { backendUrl } from '../../App';
 
-const Customer = () => {
-  const [listCustomer, setListCustomer] = useState([]);
+
+const Employee = () => {
+  const [listEmployee, setListEmployee] = useState([]);
   const navigate = useNavigate();
 
   const fetchList = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/customer/list');
+      const response = await axios.get(backendUrl + '/api/employee/list');
       console.log(response.data.message)
       if (response.data.sucess) {
-        setListCustomer(response.data.message);
+        setListEmployee(response.data.message);
       } else {
         toast.error(response.data.message);
       }
@@ -25,7 +26,7 @@ const Customer = () => {
 
   const remove = async (id) => {
     try {
-      const response = await axios.post(backendUrl + '/api/customer/remove', { id });
+      const response = await axios.post(backendUrl + '/api/employee/remove', { id });
       if (response.data.sucess) {
         toast.success(response.data.message);
         await fetchList();
@@ -43,23 +44,24 @@ const Customer = () => {
 
   return (
     <>
-      <p className='mb-2'>All Customers List</p>
+      <p className='mb-2'>All Employees List</p>
       <div className='flex flex-col gap-2'>
         {/* -------------- List Table Title -------------- */}
-        <div className='hidden md:grid grid-cols-[1.5fr_1fr_1fr_2fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm'>
+        <div className='hidden md:grid grid-cols-[1fr_1fr_1fr_2fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm'>
           <b>Name</b>
           <b>Date of birth</b>
           <b>Phone</b>
           <b>Email</b>
           <b>Password</b>
+          <b>Position</b>
           <b className='text-center'>Action</b>
         </div>
 
         {/* -------------- Category List ---------------- */}
         {
-          listCustomer.map((item, index) => (
+          listEmployee.map((item, index) => (
             <div 
-              className='grid grid-cols-[1.5fr_1fr_1fr_2fr_1fr_1fr] items-center gap-2 py-1 px-2 border text-sm' 
+              className='grid grid-cols-[1fr_1fr_1fr_2fr_1fr_1fr_1fr] items-center gap-2 py-1 px-2 border text-sm' 
               key={index}
             >
               <b>{item.name}</b>
@@ -67,13 +69,20 @@ const Customer = () => {
               <b>{item.phone}</b>
               <b>{item.email}</b>
               <b>{item.password}</b>
+              <b>{item.position}</b>
               <div className='flex justify-center items-center space-x-2'>
                 <p 
-                  onClick={() => remove(item.customer_id)} 
+                  onClick={() => remove(item.employee_id)} 
                   className='cursor-pointer text-lg text-red-500'
                 >
                   X
                 </p>
+                <button
+                  onClick={() => navigate(`/Employee_manage/Edit/${item.employee_id}`)}
+                  className='text-center bg-blue-500 text-white px-3 py-1 rounded-md text-xs'
+                >
+                  Edit
+                </button>
               </div>
             </div>
           ))
@@ -83,4 +92,4 @@ const Customer = () => {
   );
 }
 
-export default Customer
+export default Employee
