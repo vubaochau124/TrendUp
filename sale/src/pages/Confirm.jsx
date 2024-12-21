@@ -85,6 +85,7 @@ const Confirm = ({token}) => {
         fetchProductDetails();
         fetchCustomerDetails();
         fetchTotalPrice();
+        toast.success(response.data.message)
       } else {
         toast.error(response.data.message)
       }

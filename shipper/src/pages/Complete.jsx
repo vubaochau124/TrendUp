@@ -16,8 +16,9 @@ const Complete = ({token}) => {
   
   const fetchAllOrders = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/order/list')
-      const response_orderDetail = await axios.get(backendUrl + '/api/order/detail')
+      const status = "Completed"
+      const response = await axios.post(backendUrl + '/api/order/condition', {status})
+      const response_orderDetail = await axios.post(backendUrl + '/api/order/detailcondition', {status})
       if (response.data.success && response_orderDetail.data.success){
         setOrders(response.data.message)
         setOrderDetails(response_orderDetail.data.message)
@@ -114,12 +115,10 @@ const Complete = ({token}) => {
             <p>Date : {order.purchase_date.split("T")[0]}</p>
           </div>
           <p className='text-sm sm:text-[15px]'>{currency}{totalPrice[order.order_id]}</p>
-          <select value={order.status} className='p-2 font-semibold'>
-            <option value="Confirm">Confirm</option>
-            <option value="Export">Export</option>
-            <option value="Ship">Ship</option>
-            <option value="Complete">Complete</option>
-          </select>
+          <button 
+          className='font-semibold text-center bg-white text-black px-3 py-2 rounded-md text-xs border-2 border-gray-200'>
+            {order.status}
+          </button>
           </div>
         ))}
       </div>
