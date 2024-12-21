@@ -1,3 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+    font-family: Outfit;
+}
+
+select,input,textarea {
+    border: 2px solid #acebdd;
+    outline-color: darkcyan;
+    border-radius: 4px;
+}
+
+/* Styles cho sidebar */
+.sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2 hover:bg-[#acebdd] transition-colors;
+}
+
+.active {
+    background-color: #acebdd;
+    border-color: darkcyan;
+}
+
+/* Style cho những menu chứa submenu */
+.menu-btn {
+    @apply flex items-center justify-between w-full px-3 py-2 hover:bg-[#acebdd] transition-colors;
+}
+
+.menu-btn.active {
+    background-color: #acebdd;
+    border-color: darkcyan;
+}
+
+.submenu-item {
+    @apply block pl-8 py-1.5 text-[13px] hover:bg-[#acebdd] transition-colors;
+}
+
+img {
+    cursor: pointer;
+  }
