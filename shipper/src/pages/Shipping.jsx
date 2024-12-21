@@ -101,11 +101,15 @@ const Shipping = ({token}) => {
 
   return (
     <div>
-      <h3>Order Page</h3>
+      <h3>Shipping Order Page</h3>
       <div>
         {orders.map((order, index) => (
           <div className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1.2fr_0.7fr_1fr] gap-3 items-start border-2 border-gray-200 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700' key={index}>
-            <img className='w-12' src={assets.parcel_icon} alt="" />
+            <div>
+              <img className='w-12' src={assets.parcel_icon} alt="" />
+              <p className='mt-5 mb-2 font-medium text-center w-12'>{order.order_id}</p>
+            </div>
+           
             <div>
             <div>
               {orderDetails.map((item, index) => {
