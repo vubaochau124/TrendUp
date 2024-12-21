@@ -62,9 +62,9 @@ const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
-
+        console.log(req.body);
         // Parse sizes to ensure it's an array of objects with size and quantity
-        const parsedSizes = JSON.parse(sizes);
+        // const parsedSizes = JSON.parse(sizes);
 
         const updatedProduct = await productModel.update(
             {
@@ -73,7 +73,7 @@ const editProduct = async (req, res) => {
                 price,
                 category,
                 subCategory,
-                sizes: parsedSizes, // Store sizes as an array of objects
+                sizes, //: parsedSizes, // Store sizes as an array of objects
                 bestseller: bestseller === 'true' ? true : false // Convert string to boolean
             },
             {
@@ -81,7 +81,7 @@ const editProduct = async (req, res) => {
             }
         );
 
-        if (updatedProduct[0]) {
+        if (updatedProduct) {
             res.json({ success: true, message: 'Product has been updated' });
         } else {
             res.json({ success: false, message: 'Product not found' });
@@ -95,7 +95,17 @@ const editProduct = async (req, res) => {
 // function for remove product
 const removeProduct = async (req, res) => {
     try {
-        const productId = req.body.id;
+        const productId = req.params.id;
+        const product = await productModel.findOne({
+            where: { id: productId }
+        });
+
+        // delete images from cloudinary
+        product.image.forEach(async (item) => {
+            const publicId = item.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+        });
+
         const result = await productModel.destroy({
             where: { id: productId }
         });
@@ -112,9 +122,9 @@ const removeProduct = async (req, res) => {
 }
 
 // function for remove product
-const singleProduct = async (req, res) => {
+const getProductById = async (req, res) => {
     try {
-        const productId = req.body.id;
+        const productId = req.params.id;
         if (!productId) {
             return res.json({ success: false, message: 'Product ID is required' });
         }
@@ -134,4 +144,4 @@ const singleProduct = async (req, res) => {
     }
 }
 
-export { listProduct, addProduct, editProduct, removeProduct, singleProduct}
+export { listProduct, addProduct, editProduct, removeProduct, getProductById}
