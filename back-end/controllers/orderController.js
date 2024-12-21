@@ -89,6 +89,43 @@ const totalPrice = async (req, res) => {
         res.json({success:false, message:error.message})
     }
 }
+
+const allOrdersCondition = async (req, res) => {
+    try {
+        const {status} = req.body
+        const list_status = status.split(";")
+        let query_string = []
+
+        for (const s of list_status) {
+            query_string.push("status = ?")
+        }
+            
+        const [list_order] = await connectDB.query("SELECT * FROM orders WHERE " + query_string.join(" or "), list_status)
+        res.json({success:true, message:list_order})
+    } catch (error) {
+        console.log(error)
+        res.json({success:false, message:error.message})
+    }
+}
+
+const allOrderDetailsCondition = async (req, res) => {
+    try {
+        const {status} = req.body
+        const list_status = status.split(";")
+        let query_string = []
+
+        for (const s of list_status) {
+            query_string.push("status = ?")
+        }
+            
+        const [list_order] = await connectDB.query("SELECT *  FROM orderdetails WHERE order_id IN ( SELECT order_id FROM orders WHERE " + query_string.join(" or ") + " );", list_status)
+        
+        res.json({success:true, message:list_order})
+    } catch (error) {
+        console.log(error)
+        res.json({success:false, message:error.message})
+    }
+}
 //User orders data for Frontend
 const userOrders = async (req, res) => {
 
@@ -96,7 +133,16 @@ const userOrders = async (req, res) => {
 
 //update order status from Admin Panel
 const updateStatus = async (req, res) => {
-
+    try {
+        const {status, id} = req.body
+        await connectDB.query("UPDATE orders \
+            SET status = ? \
+            where order_id = ?;",[status, id])
+        res.json({success:true, message:"Successfully " + status })
+    } catch (error) {
+        console.log(error)
+        res.json({success:false, message:error.message})
+    }
 }
 
-export { placeOrder, placeOrderRazorpay, placeOrderStripe, allOrders, userOrders, updateStatus, allOrderDetails,totalPrice}
+export { placeOrder, placeOrderRazorpay, placeOrderStripe, allOrders, userOrders, updateStatus, allOrderDetails,totalPrice, allOrdersCondition, allOrderDetailsCondition}

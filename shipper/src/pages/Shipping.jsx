@@ -5,9 +5,8 @@ import { toast } from 'react-toastify';
 import { backendUrl, currency } from '../App';
 import { assets } from '../assets/assets';
 
-
-const Order = ({token}) => {
-
+const Shipping = ({token}) => {
+  
   const [orders, setOrders] = useState([]);
   const [orderDetails, setOrderDetails] = useState([]);
   const [products, setProducts] = useState([]);
@@ -129,5 +128,4 @@ const Order = ({token}) => {
   )
 }
 
-export default Order
-
+export default Shipping

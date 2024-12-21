@@ -81,15 +81,15 @@ const Sidebar = () => {
       route: '/'
     },
     {
-      title: 'Order Confirmation',
+      title: 'Confirmation Order',
       route: '/Confirm',
     },
     {
-      title: 'Order Status',
+      title: 'Status Order',
       route: '/Status'
     },
     {
-      title: 'Order Completion',
+      title: 'Completion Order',
       route: '/Complete',
     },
   ];

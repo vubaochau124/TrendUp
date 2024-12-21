@@ -16,8 +16,9 @@ const Confirm = ({token}) => {
   
   const fetchAllOrders = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/order/list')
-      const response_orderDetail = await axios.get(backendUrl + '/api/order/detail')
+      const status = "Pending"
+      const response = await axios.post(backendUrl + '/api/order/condition', {status})
+      const response_orderDetail = await axios.post(backendUrl + '/api/order/detailcondition', {status})
       if (response.data.success && response_orderDetail.data.success){
         setOrders(response.data.message)
         setOrderDetails(response_orderDetail.data.message)
@@ -72,6 +73,25 @@ const Confirm = ({token}) => {
       toast.error(error.message)
     }
   }
+
+  const update = async (id) => {
+    try{
+      const status = "Confirmed"
+      const response = await axios.post(backendUrl + "/api/order/status", {status, id})
+      console.log(response)
+      if (response.data.success == true){
+        setTotalPrice(response.data.message)
+        fetchAllOrders();
+        fetchProductDetails();
+        fetchCustomerDetails();
+        fetchTotalPrice();
+      } else {
+        toast.error(response.data.message)
+      }
+    } catch(error) {
+      toast.error(error.message)
+    }
+  }
   useEffect(() => {
     fetchAllOrders();
     fetchProductDetails();
@@ -81,7 +101,7 @@ const Confirm = ({token}) => {
 
   return (
     <div>
-      <h3>Order Page</h3>
+      <h3>Confirmation Order Page</h3>
       <div>
         {orders.map((order, index) => (
           <div className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1.2fr_0.7fr_1fr] gap-3 items-start border-2 border-gray-200 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700' key={index}>
@@ -114,12 +134,11 @@ const Confirm = ({token}) => {
             <p>Date : {order.purchase_date.split("T")[0]}</p>
           </div>
           <p className='text-sm sm:text-[15px]'>{currency}{totalPrice[order.order_id]}</p>
-          <select value={order.status} className='p-2 font-semibold'>
-            <option value="Confirm">Confirm</option>
-            <option value="Export">Export</option>
-            <option value="Ship">Ship</option>
-            <option value="Complete">Complete</option>
-          </select>
+          <button 
+          onClick={() => update(order.order_id)} 
+          className='font-semibold text-center bg-blue-500 text-white px-3 py-2 rounded-md text-xs'>
+            Confirm
+          </button>
           </div>
         ))}
       </div>
