@@ -12,19 +12,23 @@ const createToken = (id) => {
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await userModel.findOne({ where: { email: email } });
+        const user = await userModel.findOne({ where: { email } });
+
         if (!user) {
-            return res.json({ success: false, message: 'Invalid email or password' });
+            return res.json({ success: false, message: 'User not found' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
+
         if (!isMatch) {
-            return res.json({ success: false, message: 'Invalid email or password' });
+            return res.json({ success: false, message: 'Invalid credentials' });
         }
 
-        const token = createToken(user.id);
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
         res.json({ success: true, token });
     } catch (error) {
+        console.log(error);
         res.status(500).json({ success: false, message: error.message });
     }
 };

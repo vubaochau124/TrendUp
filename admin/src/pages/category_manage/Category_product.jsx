@@ -3,14 +3,16 @@ import { useNavigate } from 'react-router-dom'; // Thêm import useNavigate
 import axios from 'axios'
 import { backendUrl, currency } from '../../App'
 import { toast } from 'react-toastify';
+import { useParams } from "react-router-dom";
 
-const Product = ({ token }) => {
+const Category_product = () => {
+  const { name } = useParams();
   const [products, setProducts] = useState([]);
   const navigate = useNavigate(); // Hook điều hướng
 
   const fetchproducts = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/product/list');
+      const response = await axios.post(backendUrl + '/api/categories/listproduct', {name});
       if (response.data.sucess) {
         setProducts(response.data.list_products);
         console.log(products)
@@ -26,7 +28,7 @@ const Product = ({ token }) => {
 
   const removeProduct = async (id) => {
     try {
-      const response = await axios.post(backendUrl + '/api/product/remove', { id }, { headers: { token } });
+      const response = await axios.post(backendUrl + '/api/product/remove', { id });
       if (response.data.sucess) {
         toast.success(response.data.message);
         await fetchproducts();
@@ -83,4 +85,4 @@ const Product = ({ token }) => {
   );
 };
 
-export default Product
+export default Category_product

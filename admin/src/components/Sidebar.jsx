@@ -28,7 +28,7 @@ const MenuItem = ({ item, isSubRoute }) => {
             onClick={toggleSubmenu}
             className="menu-btn"
           >
-            <p className='hidden md:block'>{item.title}</p>
+            <p className='md:block'>{item.title}</p>
             <span className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
               ▼
             </span>
@@ -60,7 +60,7 @@ const MenuItem = ({ item, isSubRoute }) => {
         className={({ isActive }) => `sidebar-item ${isActive && !isSubRoute ? 'active' : ''}`}
         to={item.route}
       >
-        <p className='hidden md:block'>{item.title}</p>
+        <p className='md:block'>{item.title}</p>
       </NavLink>
       <hr />
     </>
@@ -72,13 +72,18 @@ const Sidebar = () => {
 
   // Cấu trúc menu data
   const menuItems = [
-    {
-      title: 'Home',
-      route: '/Home'
-    },
+    // {
+    //   title: 'Home',
+    //   route: '/Home'
+    // },
     {
       title: 'Employee Management',
-      route: '/Employee'
+      route: '/Employee_manage',
+      submenu: [
+        { title: 'Employee list', route: 'List' },
+        { title: 'Add Employee ', route: 'Add' },
+        //{ title: 'Edit product', route: 'Edit' }
+      ]
     },
     {
       title: 'Customer Management',
@@ -93,7 +98,8 @@ const Sidebar = () => {
       route: '/Product_manage',
       submenu: [
         { title: 'Product list', route: 'List' },
-        { title: 'Add product', route: 'Add' }
+        { title: 'Add product', route: 'Add' },
+        //{ title: 'Edit product', route: 'Edit' }
       ]
     },
     {
@@ -102,7 +108,7 @@ const Sidebar = () => {
       submenu: [
         { title: 'Category list', route: 'List' },
         { title: 'Add category', route: 'Add' },
-        { title: 'Edit category', route: 'Edit' }
+        // { title: 'Edit category', route: 'Edit' }
       ]
     },
     {
@@ -113,10 +119,6 @@ const Sidebar = () => {
       title: 'Import Management',
       route: '/Import_manage',
     },
-    {
-      title: 'Export Management',
-      route: '/Export_manage',
-    }
   ];
 
   // Kiểm tra xem có đang ở route của submenu nào không
@@ -125,7 +127,7 @@ const Sidebar = () => {
     .some(item => location.pathname.includes(item.route));
 
   return (
-    <div className='w-[18%] min-h-screen border-r-2'>
+    <div className='w-[20%] min-h-screen border-r-2'>
       <div className='flex flex-col gap-1 pt-1 pl-[5%] pr-[5%] text-[15px]'>
         {menuItems.map((item, index) => (
           <MenuItem

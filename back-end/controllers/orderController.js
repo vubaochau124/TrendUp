@@ -1,12 +1,15 @@
 import orderModel from "../models/ordersModel.js";
+import productModel from "../models/productsModel.js";
 import userModel from "../models/userModel.js";
 
 
 // placeOrder function
 const placeOrder = async (req, res) => {
     try {
-        const { userId, items, amount, address } = req.body;
+        const { items, amount, address } = req.body;
+        const userId = req.userId;
 
+        // Create a new order
         const newOrder = await orderModel.create({
             userId,
             items,
@@ -17,6 +20,20 @@ const placeOrder = async (req, res) => {
             payment: false,
             date: new Date()
         });
+
+        // Reduce the quantity of the ordered sizes in the product inventory
+        for (const item of items) {
+            const product = await productModel.findByPk(item.id);
+            if (product) {
+                const sizes = product.sizes.map(size => {
+                    if (size.size === item.size) {
+                        size.quantity -= item.quantity;
+                    }
+                    return size;
+                });
+                await product.update({ sizes });
+            }
+        }
 
         res.json({ success: true, message: 'Order placed successfully', order: newOrder });
     } catch (error) {
@@ -36,14 +53,14 @@ const allOrders = async (req, res) => {
 
 const userOrders = async (req, res) => {
     try {
-        
-        const {userId} = req.body;
-        const orders = await orderModel.findAll({ where: { userId } });
-        res.json({success: true, orders});
+        const userId = req.userId; // Get userId from the request object
 
+        const orders = await orderModel.findAll({ where: { userId } });
+
+        res.json({ success: true, orders });
     } catch (error) {
         console.log(error);
-        res.status(500).json({success: false, message: error.message});
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 

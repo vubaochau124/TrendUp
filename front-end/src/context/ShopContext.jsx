@@ -104,9 +104,8 @@ const ShopContextProvider = (props) => {
 
     const getUserCart = async (token) => {
         try {
-            const response = await axios.post(
+            const response = await axios.get(
                 'http://localhost:4000/api/cart/get',
-                {},
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -123,7 +122,7 @@ const ShopContextProvider = (props) => {
             console.log(error);
             toast.error('An error occurred. Please try again.');
         }
-    }
+    };
 
     const getCartAmount = async => {
         let totalAmount = 0;

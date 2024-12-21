@@ -5,7 +5,7 @@ import productModel from '../models/productsModel.js'; // Ensure the correct imp
 // Function for adding a product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, category , subCategory, sizes, bestseller } = req.body;
+        const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
 
         const image1 = req.files.image1 && req.files.image1[0];
         const image2 = req.files.image2 && req.files.image2[0];
@@ -21,8 +21,11 @@ const addProduct = async (req, res) => {
             })
         );
 
-        console.log(name, description, price, category , subCategory, sizes, bestseller);
+        console.log(name, description, price, category, subCategory, sizes, bestseller);
         console.log(imagesUrl);
+
+        // Parse sizes to ensure it's an array of objects with size and quantity
+        const parsedSizes = JSON.parse(sizes);
 
         // Add product to the database
         const newProduct = await productModel.create({
@@ -32,16 +35,14 @@ const addProduct = async (req, res) => {
             image: imagesUrl, // Ensure image is stored as JSON
             category,
             subCategory,
-            sizes: sizes.split(','), // Convert string to array
+            sizes: parsedSizes, // Store sizes as an array of objects
             bestseller: bestseller === 'true' ? true : false, // Convert string to boolean
-            // date: new Date().getFullYear() // Assuming you want to store the current year
         });
 
         res.json({ success: true, product: newProduct });
-
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
@@ -62,6 +63,9 @@ const editProduct = async (req, res) => {
         const productId = req.params.id;
         const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
 
+        // Parse sizes to ensure it's an array of objects with size and quantity
+        const parsedSizes = JSON.parse(sizes);
+
         const updatedProduct = await productModel.update(
             {
                 name,
@@ -69,8 +73,8 @@ const editProduct = async (req, res) => {
                 price,
                 category,
                 subCategory,
-                sizes,
-                bestseller: bestseller === 'true' ? true : false
+                sizes: parsedSizes, // Store sizes as an array of objects
+                bestseller: bestseller === 'true' ? true : false // Convert string to boolean
             },
             {
                 where: { id: productId }
@@ -84,9 +88,9 @@ const editProduct = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
-}
+};
 
 // function for remove product
 const removeProduct = async (req, res) => {

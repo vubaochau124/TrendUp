@@ -52,14 +52,18 @@ const updateCart = async (req, res) => {
 // get user cart
 const getUserCart = async (req, res) => {
     try {
-        const {userId} = req.body;
+        const userId = req.userId; // Get userId from the request object
 
-        const userData = await userModel.findOne({where: {id: userId}});
-        let cartData = await userData.cartData;
+        const user = await userModel.findOne({ where: { id: userId } });
 
-        res.json({success: true, cartData});
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.json({ success: true, cartData: user.cartData });
     } catch (error) {
         console.log(error);
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 

@@ -27,56 +27,57 @@ const PlaceOrder = () => {
   }
 
   const onSubmitHandler = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     try {
-      let orderItems = []
+        let orderItems = [];
 
-      for (const items in cartItems) {
-        for (const item in cartItems[items]) {
-          if (cartItems[items][item] > 0) {
-            const itemInfo = structuredClone(products.find(product => product.id === parseInt(items)));
-            if (itemInfo) {
-              itemInfo.size = item
-              itemInfo.quantity = cartItems[items][item]
-              orderItems.push(itemInfo)
+        for (const items in cartItems) {
+            for (const item in cartItems[items]) {
+                if (cartItems[items][item] > 0) {
+                    const itemInfo = structuredClone(products.find(product => product.id === parseInt(items)));
+                    if (itemInfo) {
+                        itemInfo.size = item;
+                        itemInfo.quantity = cartItems[items][item];
+                        orderItems.push(itemInfo);
+                    }
+                }
             }
-          }
         }
-      }
-      let orderData = {
-        address: formData,
-        items: orderItems,
-        amount: getCartAmount() + delivery_fee
-      }
 
-      switch (method) {
-        // API call for cod payment
-        case 'COD':
-            const response = await fetch('http://localhost:4000/api/order/place', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify(orderData)
-            });
+        let orderData = {
+            address: formData,
+            items: orderItems,
+            amount: getCartAmount() + delivery_fee
+        };
 
-            if (response.ok) {
-                setCartItems({});
-                navigate('/orders');
-            } else {
-                const errorData = await response.json();
-                toast.error(errorData.message);
-            }
-            break;
-        default:
-            break;
-    }
+        switch (method) {
+            // API call for cod payment
+            case 'COD':
+                const response = await fetch('http://localhost:4000/api/order/place', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(orderData)
+                });
 
+                if (response.ok) {
+                    setCartItems({});
+                    navigate('/orders');
+                } else {
+                    const errorData = await response.json();
+                    toast.error(errorData.message);
+                }
+                break;
+            default:
+                break;
+        }
     } catch (error) {
-
+        console.log(error);
+        toast.error(error.message);
     }
-  }
+};
 
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
