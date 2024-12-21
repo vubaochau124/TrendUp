@@ -12,7 +12,7 @@ app.use('/api', backendApi);  // API route
 
 // Cấu hình frontend admin và user
 app.use('/admin', express.static(path.join(__dirname, 'admin/build')));
-app.use('/user', express.static(path.join(__dirname, 'front-end/build')));
+// app.use('/user', express.static(path.join(__dirname, 'front-end/build')));
 // app.use('/sale', express.static(path.join(__dirname, 'sale/build')));
 // app.use('/shipper', express.static(path.join(__dirname, 'shipper/build')));
 // app.use('/warehouse', express.static(path.join(__dirname, 'warehouse/build')));
