@@ -3,91 +3,108 @@ import axios from 'axios';
 import { assets } from '../../assets/assets';
 //import {backendUrl} from '../App.js'
 import { backendUrl } from '../../App';
-import { useParams } from "react-router-dom";
+import { useFetcher, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 
 const Category_edit = ( ) => {
-  const { name } = useParams();
-  const [nameProduct, setNameProduct] = useState(name);
+  const { id } = useParams("id");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  
-  // Loại danh mục chính (Wearer hoặc Style)
-  const [categoryType, setCategoryType] = useState("Wearer");
+  const [subCategoryList, setSubCategoryList] = useState([]);
 
-  // Tải dữ liệu danh mục khi component được render
-  useEffect(() => {
-    const fetchCategoryDetails = async () => {
-      try {
-        // Gọi API để lấy thông tin chi tiết của danh mục
-        const response_style = await axios.post(backendUrl + "/api/categories/singlestyle", { name })
-        const response_wearer = await axios.post(backendUrl + "/api/categories/singlewearer", { name })
+  const [subFormState, setSubFormState] = useState(false);
+  const [subForm, setSubForm] = useState({
+    name: "",
+    description: ""
+  });
 
-        const styleData = response_style.data.style;
-        const wearerData = response_wearer.data.wearer;
-        console.log(styleData)
-        if (styleData.length !== 0) {
-          setNameProduct(name)
-          setDescription(styleData[0].description);
-          setCategoryType('Style');
-        }
-        if (wearerData.length !== 0) {
-          setNameProduct(name)
-          setDescription(wearerData[0].description);
-          setCategoryType('Wearer');
-        }
-
-      } catch (error) {
-        console.error("Lỗi khi tải chi tiết danh mục:", error);
+  const fetchCategory = async () => {
+    try {
+      const response = await axios.get(backendUrl + `/api/category/${id}`);
+      console.log(response.data);
+      if (response.data.success) {
+        setName(response.data.category.name);
+        setDescription(response.data.category.description);
+        fetchSubCategoryList();
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
       }
-    };
-
-    if (name) {
-      fetchCategoryDetails();
+    } catch (error) {
+      console.error("Error fetch category:", error);
     }
-  }, [name]);
+  }
+
+  const fetchSubCategoryList = async () => {
+    try {
+      const response = await axios.get(backendUrl + `/api/category/sub/${id}`);
+      console.log(response.data);
+      if (response.data.success) {
+        setSubCategoryList(response.data.subCategories);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetch subcategory list:", error);
+    }
+  }
+
+  const addSubCategory = async () => {
+    try {
+      const response = await axios.post(backendUrl + '/api/category/subadd', { subForm, category_id: id });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        fetchSubCategoryList();
+        setSubForm({ name: "", description: "" });
+        setSubFormState(false);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error add subcategory:", error);
+    }
+  }
+
+  const removeSubCategory = async (id) => {
+    try {
+      const response = await axios.post(backendUrl + `/api/category/subremove/${id}`);
+      if (response.data.success) {
+        toast.success(response.data.message);
+        fetchSubCategoryList();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error remove subcategory:", error);
+    }
+  }
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      // Gửi yêu cầu PUT đến backend để cập nhật
-      if (categoryType === 'Wearer'){
-        const response = await axios.post(backendUrl + "/api/categories/editwearer", {
-          name,
-          nameProduct,
-          description
-        });
-        if (response.data.success){
-          toast.success(response.data.message)
-        } else {
-          toast.error(response.data.message)
-        }
-      } 
-      if (categoryType === 'Style'){
-        const response = await axios.post(backendUrl + "/api/categories/editstyle", {
-          name,
-          nameProduct,
-          description
-        });
-        if (response.data.sucess){
-          toast.success(response.data.message)
-        } else {
-          toast.error(response.data.message)
-        }
-      } 
-
+      const response = await axios.post(backendUrl + `/api/category/edit/${id}`, { name, description });
+      if (response.data.success) {
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
     } catch (error) {
       console.error("Lỗi khi sửa danh mục:", error);
     }
-  }
+  }  
+  
+  // fix sau
+  useEffect(() => {
+    fetchCategory();
+  }, []);
 
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3'>
-      {/* Tên danh mục */}
       <div className='w-full'>
         <p className='mb-2'>Category name</p>
         <input 
-          onChange={(e) => setNameProduct(e.target.value)} 
-          value={nameProduct} 
+          onChange={(e) => setName(e.target.value)} 
+          value={name} 
           className='w-full max-w-[500px] px-3 py-2' 
           type="text" 
           placeholder='Type here' 
@@ -95,7 +112,6 @@ const Category_edit = ( ) => {
         />
       </div>
 
-      {/* Mô tả danh mục */}
       <div className='w-full'>
         <p className='mb-2'>Category description</p>
         <textarea 
@@ -107,26 +123,86 @@ const Category_edit = ( ) => {
         />
       </div>
 
-      {/* Chọn loại danh mục */}
-      <div>
-        <p className='mb-2'>Category type</p>
-        <select 
-          onChange={(e) => setCategoryType(e.target.value)} 
-          value={categoryType} 
-          className='w-full px-3 py-2'
-        >
-          <option value="Wearer">Wearer Category</option>
-          <option value="Style">Style Category</option>
-        </select>
+      <div className='w-full'>
+        <p className='mb-2'>Subcategory</p>
+        <div className='flex flex-col gap-2'>
+        
+          {/* -------------- List Table Title -------------- */}
+          <div className='hidden md:grid grid-cols-[3fr_3fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm'>
+            <b>Name</b>
+            <b>Description</b>
+            <b className='text-center'>Action</b>
+          </div>
+  
+          {/* -------------- Subcategory List ---------------- */}
+          {
+            subCategoryList.map((item, index) => (
+              <div className='grid grid-cols-[3fr_3fr_0.5fr_0.5fr] md:grid-cols-[3fr_3fr_0.5fr_0.5fr] items-center gap-2 py-1 px-2 border text-sm' key={index}>
+                <p>{item.name}</p>
+                <p>{item.description}</p>
+                <p onClick={() => removeSubCategory(item.id)} className='text-right md:text-center cursor-pointer text-lg'>X</p>
+                <button
+                  onClick={() => navigate(`/Product_manage/Edit/${item.id}`)}
+                  className='text-center px-3 py-1 rounded-md'
+                >
+                  Edit
+                </button>
+              </div>
+            ))
+          }
+        </div>
       </div>
+      
+      <span className='flex gap-4'>
+        <button
+          className='w-28 py-3 mt-4 bg-teal-500 text-white'
+          onClick={() => setSubFormState(!subFormState)}
+        >
+          ADD SUB
+        </button>
 
-      {/* Nút cập nhật */}
-      <button 
-        type="submit" 
-        className='w-28 py-3 mt-4 bg-teal-500 text-white'
-      >
-        UPDATE
-      </button>
+        <button 
+          type="submit" 
+          className='w-28 py-3 mt-4 bg-teal-500 text-white'
+        >
+          UPDATE
+        </button>
+      </span>
+
+      {subFormState && (
+        <div className='flex flex-col w-full items-start gap-3'>
+          <div className='w-full'>
+            <p className='mb-2'>Subcategory name</p>
+            <input 
+              onChange={(e) => setSubForm({ ...subForm, name: e.target.value })} 
+              value={subForm.name}
+              className='w-full max-w-[500px] px-3 py-2' 
+              type="text" 
+              placeholder='Type here' 
+              required 
+            />
+          </div>
+    
+          <div className='w-full'>
+            <p className='mb-2'>Subcategory description</p>
+            <textarea 
+              onChange={(e) => setSubForm({ ...subForm, description: e.target.value })} 
+              value={subForm.description} 
+              className='w-full max-w-[500px] px-3 py-2' 
+              placeholder='Write content here' 
+              required 
+            />
+          </div>
+    
+          <button 
+            type="submit" 
+            className='w-28 py-3 mt-4 bg-teal-500 text-white'
+            onClick={addSubCategory}
+          >
+            ADD
+          </button>
+        </div>
+      )}
     </form>
   )
 }

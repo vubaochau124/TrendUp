@@ -10,7 +10,7 @@ const Employee_add = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [position, setPosition] = useState("admin");
+  const [position, setPosition] = useState("sale");
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -22,8 +22,9 @@ const Employee_add = () => {
           email,
           password,
           position});
-        if (response.data.sucess){
+        if (response.data.success){
           toast.success(response.data.message)
+          navigate(-1);
         } else {
           toast.error(response.data.message)
         }
@@ -108,7 +109,7 @@ const Employee_add = () => {
           value={position} 
           className='w-full px-3 py-2'
         >
-          <option value="admin">Admin</option>
+          {/* <option value="admin">Admin</option> */}
           <option value="sale">Sale</option>
           <option value="shipper">Shipper</option>
           <option value="warehouse_staff">Warehouse staff</option>

@@ -6,21 +6,24 @@ import { backendUrl } from '../App';
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
+  const sizeList = ['S', 'M', 'L', 'XL', 'XXL'];
 
   const fetchAllInventory = async () => {
     try {
       const response = await axios.get(backendUrl + '/api/product/list')
-      if (response.data.sucess){
-        const list_product = response.data.list_products
-        let detail = []
-        for (const p of list_product) {
-          const product_id = p.product_id
-          const responseSelect = await axios.post(backendUrl + '/api/inventory/select', {product_id})
-          const selectInventory = responseSelect.data.message
-          detail.push({"name": p.name, "detail": selectInventory})
-        }
-        console.log(detail)
-        setInventory(detail)
+
+      if (response.data.success){
+        const list_product = response.data.products;
+
+        list_product.forEach((product) => {
+          product.sizes = sizeList.map((size) => {
+            const quantity = product.sizes.find((item) => item.size === size)?.quantity || 0;
+            return { size, quantity }
+          })
+        })
+
+        console.log(list_product)
+        setInventory(list_product)
       } else {
         toast.error(response.data.message)
       }
@@ -30,7 +33,7 @@ const Inventory = () => {
   }
   useEffect(() => {
     fetchAllInventory();
-    },[])
+  },[])
   return (
     <>
       <p className='mb-2'>All Inventory List</p>
@@ -54,12 +57,14 @@ const Inventory = () => {
               key={index}
             >
               <b>{item.name}</b>
-              <b>{item.detail.S}</b>
-              <b>{item.detail.S}</b>
-              <b>{item.detail.S}</b>
-              <b>{item.detail.S}</b>
-              <b>{item.detail.S}</b>
-              <b>{item.detail.S}</b>
+
+              {
+                item.sizes.map((_, index) => (
+                  <b>{item.sizes.find((size) => size.size === sizeList[index]).quantity}</b>
+                ))
+              }
+
+              <b>{item.sizes.reduce((total, size) => total + size.quantity * 1, 0)}</b>
             </div>
           ))
         }

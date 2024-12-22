@@ -26,6 +26,7 @@ const addProduct = async (req, res) => {
 
         // Parse sizes to ensure it's an array of objects with size and quantity
         const parsedSizes = JSON.parse(sizes);
+        console.log(parsedSizes);
 
         // Add product to the database
         const newProduct = await productModel.create({
@@ -62,6 +63,36 @@ const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
+        const image1 = req.files.image1 && req.files.image1[0];
+        const image2 = req.files.image2 && req.files.image2[0];
+        const image3 = req.files.image3 && req.files.image3[0];
+        const image4 = req.files.image4 && req.files.image4[0];
+        const uploadImages = [image1, image2, image3, image4].filter((item) => item !== undefined);
+        // fetch old images
+        const oldProduct = await productModel.findOne({
+            where: { id: productId }
+        });
+        const oldImages = oldProduct.image;
+        console.log("oldImages before add uploaded: ", oldImages);
+        if (image1 !== undefined) {
+            const url = await cloudinary.uploader.upload(image1.path, { resource_type: 'image' });
+            oldImages[0] = url.secure_url;
+        }
+        if (image2 !== undefined) {
+            const url = await cloudinary.uploader.upload(image2.path, { resource_type: 'image' });
+            oldImages[1] = url.secure_url;
+        }
+        if (image3 !== undefined) {
+            const url = await cloudinary.uploader.upload(image3.path, { resource_type: 'image' });
+            oldImages[2] = url.secure_url;
+        }
+        if (image4 !== undefined) {
+            const url = await cloudinary.uploader.upload(image4.path, { resource_type: 'image' });
+            oldImages[3] = url.secure_url;
+        }
+        
+        console.log("oldImages after add uploaded: ", oldImages);
+        oldImages.filter((item) => item !== undefined && item !== null);
 
         // Parse sizes to ensure it's an array of objects with size and quantity
         const parsedSizes = JSON.parse(sizes);
@@ -71,6 +102,7 @@ const editProduct = async (req, res) => {
                 name,
                 description,
                 price,
+                image: oldImages, // Ensure image is stored as JSON
                 category,
                 subCategory,
                 sizes: parsedSizes, // Store sizes as an array of objects
@@ -81,7 +113,7 @@ const editProduct = async (req, res) => {
             }
         );
 
-        if (updatedProduct[0]) {
+        if (updatedProduct) {
             res.json({ success: true, message: 'Product has been updated' });
         } else {
             res.json({ success: false, message: 'Product not found' });
@@ -95,7 +127,17 @@ const editProduct = async (req, res) => {
 // function for remove product
 const removeProduct = async (req, res) => {
     try {
-        const productId = req.body.id;
+        const productId = req.params.id;
+        const product = await productModel.findOne({
+            where: { id: productId }
+        });
+
+        // delete images from cloudinary
+        product.image.forEach(async (item) => {
+            const publicId = item.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+        });
+
         const result = await productModel.destroy({
             where: { id: productId }
         });
@@ -112,9 +154,9 @@ const removeProduct = async (req, res) => {
 }
 
 // function for remove product
-const singleProduct = async (req, res) => {
+const getProductById = async (req, res) => {
     try {
-        const productId = req.body.id;
+        const productId = req.params.id;
         if (!productId) {
             return res.json({ success: false, message: 'Product ID is required' });
         }
@@ -134,4 +176,4 @@ const singleProduct = async (req, res) => {
     }
 }
 
-export { listProduct, addProduct, editProduct, removeProduct, singleProduct}
+export { listProduct, addProduct, editProduct, removeProduct, getProductById}
