@@ -14,7 +14,7 @@ import categotyRouter from './routes/catergoriesRoute.js'
 import employeeRouter from './routes/employeeRoute.js'
 import customerRouter from './routes/customerRoute.js'
 import inventoryRouter from './routes/inventoryRoute.js'
-
+const path = require('path');
 //app config
 const app = express()
 const port = process.env.PORT || 4000
@@ -26,6 +26,7 @@ app.use(express.json())
 app.use(cors())
 
 //api endpoints
+app.use('/admin', express.static(path.join(__dirname, 'dist')));
 
 app.use('/api/user',userRouter)
 app.use('/api/product', productRouter)
