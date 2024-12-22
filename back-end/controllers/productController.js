@@ -94,6 +94,9 @@ const editProduct = async (req, res) => {
         console.log("oldImages after add uploaded: ", oldImages);
         oldImages.filter((item) => item !== undefined && item !== null);
 
+        // Parse sizes to ensure it's an array of objects with size and quantity
+        const parsedSizes = JSON.parse(sizes);
+
         const updatedProduct = await productModel.update(
             {
                 name,
@@ -102,7 +105,7 @@ const editProduct = async (req, res) => {
                 image: oldImages, // Ensure image is stored as JSON
                 category,
                 subCategory,
-                sizes, //: parsedSizes, // Store sizes as an array of objects
+                sizes: parsedSizes, // Store sizes as an array of objects
                 bestseller: bestseller === 'true' ? true : false // Convert string to boolean
             },
             {

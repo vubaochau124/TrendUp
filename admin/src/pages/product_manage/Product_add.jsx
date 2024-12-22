@@ -27,22 +27,13 @@ const Product_add = ({ token }) => {
     try {
       const formData = new FormData();
 
-      console.log("sizes: ", sizes);
-      console.log("quantity: ", quantity);
-
-      const mergedSizes = sizes.map((size) => ({
-        size, 
-        quantity: quantity.find(item => item.size === size).quantity 
-      }));
-
-      console.log("sizes: ", mergedSizes);
 
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
       formData.append("category", category);
       formData.append("subCategory", subCategory);
-      // const mergedSizes = sizes.map((size) => ({ size, quantity: quantity.find(item => item.size === size).quantity }));
+      const mergedSizes = sizes.map((size) => ({size, quantity: quantity.find(item => item.size === size).quantity }));
       formData.append("sizes", JSON.stringify(mergedSizes));
       formData.append("bestseller", bestseller);
 

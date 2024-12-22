@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 //import {backendUrl} from '../App.js'
 
 const Product_edit = () => {
+  const navigate = useNavigate();
   const { product_id } = useParams();
   let [image1, setImage1] = useState(false);
   let [image2, setImage2] = useState(false);
@@ -20,10 +21,15 @@ const Product_edit = () => {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("Men");
   const [subCategory, setSubCategory] = useState("Shirt");
-  const [wearerList, setWearerList] = useState([]); 
-  const [styleList, setStyleList] = useState([]); 
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
+  const [quantity, setQuantity] = useState([
+    { size: "S", quantity: 0 },
+    { size: "M", quantity: 0 },
+    { size: "L", quantity: 0 },
+    { size: "XL", quantity: 0 },
+    { size: "XXL", quantity: 0 },
+  ]);
 
   // Fetch existing product details when component mounts
   async function convertToFiles(imageUrls) {
@@ -41,20 +47,9 @@ const Product_edit = () => {
   const fetchProductDetails = async () => {
     try {
       const response = await axios.get(backendUrl + `/api/product/${product_id}`)
-      // const response_size = await axios.post(backendUrl + "/api/product/sizes", { product_id } )
-      // const response_style = await axios.get(backendUrl + '/api/categories/liststyle'); // URL API backend
-      // setStyleList(response_style.data.list_styles); // Lưu danh sách vào state
-
-      // const response_wearer = await axios.get(backendUrl + '/api/categories/listwearer'); // URL API backend
-      // setWearerList(response_wearer.data.list_wearer); // Lưu danh sách vào state
       
       const product = response.data.product;
       console.log(product)
-
-      // let list_sizes = [];
-      // for(let i = 0; i < response_size.data.message.length; i++){
-      //   list_sizes.push(response_size.data.message[i].size)
-      // }
       
       setName(product.name)
       setDescription(product.description)
@@ -62,7 +57,12 @@ const Product_edit = () => {
       setCategory(product.category)
       setSubCategory(product.product_style_name)
       setBestseller(product.bestseller)
-      setSizes(product.sizes)
+      product.sizes.map(item => {
+        setSizes(prev => [...prev, item.size])
+      })
+      product.sizes.map(item => {
+        setQuantity(prev => prev.map(size => size.size === item.size ? {size: item.size, quantity: item.quantity} : size))
+      })
 
       const images = product.image ? product.image : []
       setImages(images)
@@ -97,7 +97,8 @@ const Product_edit = () => {
       formData.append("price", price)
       formData.append("category", category)
       formData.append("subCategory", subCategory)
-      formData.append("sizes", JSON.stringify(sizes))
+      const mergedSizes = sizes.map((size) => ({ size, quantity: quantity.find(item => item.size === size).quantity }))
+      formData.append("sizes", JSON.stringify(mergedSizes))
       formData.append("bestseller", bestseller)
       
       if (typeof image1 === 'string') {
@@ -141,7 +142,6 @@ const Product_edit = () => {
 
       if (response.data.success){
         toast.success(response.data.message)
-        navigate(-1);
         navigate(-1);
       } else {
         toast.error(response.data.message)
@@ -247,21 +247,188 @@ const Product_edit = () => {
         </div>
       </div>
 
-      <div>
-        <p className='mb-2'>Product Sizes</p>
-        <div className='flex gap-3'>
-          {["S", "M", "L", "XL", "XXL"].map((size) => (
-            <div 
-              key={size} 
-              onClick={() => setSizes(prev => 
-                prev.includes(size) ? prev.filter(item => item !== size) : [...prev, size]
-              )}
+      <div className="w-36">
+        <p className="mb-2">Product Sizes</p>
+        <div className="flex-col gap-2">
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("S")
+                    ? prev.filter((item) => item !== "S")
+                    : [...prev, "S"]
+                )
+              }
             >
-              <p className={`${sizes.includes(size) ? "bg-teal-200": "bg-slate-200"} px-3 py-1 cursor-pointer`}>
-                {size}
+              <p
+                className={`${
+                  sizes.includes("S") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                S
               </p>
             </div>
-          ))}
+
+            {
+              // if S is included, add a field to enter the quantity
+              sizes.includes("S") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "S").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "S" ? {size: "S", quantity: e.target.value} : item)
+                  )}
+                />
+              )
+            }
+          </div>
+
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("M")
+                    ? prev.filter((item) => item !== "M")
+                    : [...prev, "M"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("M") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                M
+              </p>
+            </div>
+
+            {
+              // if M is included, add a field to enter the quantity
+              sizes.includes("M") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "M").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "M" ? {size: "M", quantity: e.target.value} : item)
+                  )}
+                />
+              )
+            }
+          </div>
+
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("L")
+                    ? prev.filter((item) => item !== "L")
+                    : [...prev, "L"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("L") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                L
+              </p>
+            </div>
+
+            {
+              // if L is included, add a field to enter the quantity
+              sizes.includes("L") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "L").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "L" ? {size: "L", quantity: e.target.value} : item)
+                  )}
+                />
+              )
+            }
+          </div>
+
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("XL")
+                    ? prev.filter((item) => item !== "XL")
+                    : [...prev, "XL"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("XL") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                XL
+              </p>
+            </div>
+
+            {
+              // if XL is included, add a field to enter the quantity
+              sizes.includes("XL") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "XL").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "XL" ? {size: "XL", quantity: e.target.value} : item)
+                  )}
+                />
+              )
+            }
+          </div>
+
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("XXL")
+                    ? prev.filter((item) => item !== "XXL")
+                    : [...prev, "XXL"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("XXL") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                XXL
+              </p>
+            </div>
+
+            {
+              // if XXL is included, add a field to enter the quantity
+              sizes.includes("XXL") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "XXL").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "XXL" ? {size: "XXL", quantity: e.target.value} : item)
+                  )}
+                />
+              )
+            }
+          </div>
         </div>
       </div>
 
