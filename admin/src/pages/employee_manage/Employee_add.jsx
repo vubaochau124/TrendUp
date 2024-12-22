@@ -3,8 +3,10 @@ import axios from 'axios';
 import { backendUrl } from '../../App';
 import { assets } from '../../assets/assets';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Employee_add = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [dob, setDob] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,7 +23,10 @@ const Employee_add = () => {
           phone,
           email,
           password,
-          position});
+          position
+        }, {
+          headers: { token: localStorage.getItem('token') },
+        });
         if (response.data.success){
           toast.success(response.data.message)
           navigate(-1);

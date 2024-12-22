@@ -5,10 +5,10 @@ import adminAuth from '../middleware/adminAuth.js';
 
 const employeeRouter = express.Router();
 
-employeeRouter.get('/list', getEmployees);
-employeeRouter.post('/add', addEmployee);
-employeeRouter.get('/fetch/:id', getEmployeeById);
-employeeRouter.post(`/edit/:id`, editEmployee);
-employeeRouter.post('/delete/:id', deleteEmployee);
+employeeRouter.get('/list', adminAuth, getEmployees);
+employeeRouter.post('/add', adminAuth, addEmployee);
+employeeRouter.get('/fetch/:id', adminAuth, getEmployeeById);
+employeeRouter.post(`/edit/:id`, adminAuth, editEmployee);
+employeeRouter.post('/delete/:id', adminAuth, deleteEmployee);
 
 export default employeeRouter;

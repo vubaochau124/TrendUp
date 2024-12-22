@@ -18,14 +18,16 @@ const Employee_edit = () => {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await axios.get(backendUrl + `/api/employee/fetch/${employee_id}`, { employee_id })
+        const response = await axios.get(backendUrl + `/api/employee/fetch/${employee_id}`, {
+          headers: { token: localStorage.getItem('token') },
+        })
         
         const employeeData = response.data.message;
         // console.log(employeeData)
         console.log(response.data);
         if (employeeData !== undefined) {
           setName(employeeData.name);
-          setDob(employeeData.dob.split('T')[0]);
+          setDob(employeeData.dob);
           setPhone(employeeData.phone);
           setEmail(employeeData.email);
           setPassword(employeeData.password);
@@ -44,15 +46,18 @@ const Employee_edit = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+    console.log("Token:", localStorage.getItem('token'));
     try {
       const response = await axios.post(backendUrl + `/api/employee/edit/${employee_id}`, {
-          employee_id,
-          name,
-          dob,
-          phone,
-          email,
-          password,
-          position
+        employee_id,
+        name,
+        dob,
+        phone,
+        email,
+        password,
+        position
+      }, {
+        headers: { token: localStorage.getItem('token') },
       });
       if (response.data.success){
         toast.success(response.data.message)
@@ -133,7 +138,7 @@ const Employee_edit = () => {
           value={position} 
           className='w-full px-3 py-2'
         >
-          <option value="admin">Admin</option>
+          {/* <option value="admin">Admin</option> */}
           <option value="sale">Sale</option>
           <option value="shipper">Shipper</option>
           <option value="warehouse_staff">Warehouse staff</option>
