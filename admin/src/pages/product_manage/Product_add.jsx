@@ -3,8 +3,11 @@ import { assets } from "../../assets/assets";
 import axios from "axios";
 import { backendUrl } from "../../App";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Product_add = ({ token }) => {
+  const navigate = useNavigate();
+
   const [image1, setImage1] = useState(false);
   const [image2, setImage2] = useState(false);
   const [image3, setImage3] = useState(false);
@@ -17,18 +20,30 @@ const Product_add = ({ token }) => {
   const [subCategory, setSubCategory] = useState("Shirt");
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
+  const [quantity, setQuantity] = useState([{size: "S", quantity: 0}, {size: "M", quantity: 0}, {size: "L", quantity: 0}, {size: "XL", quantity: 0}, {size: "XXL", quantity: 0}]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
 
+      console.log("sizes: ", sizes);
+      console.log("quantity: ", quantity);
+
+      const mergedSizes = sizes.map((size) => ({
+        size, 
+        quantity: quantity.find(item => item.size === size).quantity 
+      }));
+
+      console.log("sizes: ", mergedSizes);
+
       formData.append("name", name);
       formData.append("description", description);
       formData.append("price", price);
       formData.append("category", category);
       formData.append("subCategory", subCategory);
-      formData.append("sizes", JSON.stringify(sizes));
+      // const mergedSizes = sizes.map((size) => ({ size, quantity: quantity.find(item => item.size === size).quantity }));
+      formData.append("sizes", JSON.stringify(mergedSizes));
       formData.append("bestseller", bestseller);
 
       image1 && formData.append("image1", image1);
@@ -52,6 +67,9 @@ const Product_add = ({ token }) => {
         setImage3(false);
         setImage4(false);
         setPrice("");
+        setQuantity([{size: "S", quantity: 0}, {size: "M", quantity: 0}, {size: "L", quantity: 0}, {size: "XL", quantity: 0}, {size: "XXL", quantity: 0}]);
+        setSizes([]);
+        navigate(-1);
       } else {
         toast.error(response.data.message);
       }
@@ -193,97 +211,187 @@ const Product_add = ({ token }) => {
         </div>
       </div>
 
-      <div>
+      <div className="w-36">
         <p className="mb-2">Product Sizes</p>
-        <div className="flex gap-3">
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("S")
-                  ? prev.filter((item) => item !== "S")
-                  : [...prev, "S"]
+        <div className="flex-col gap-2">
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("S")
+                    ? prev.filter((item) => item !== "S")
+                    : [...prev, "S"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("S") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                S
+              </p>
+            </div>
+
+            {
+              // if S is included, add a field to enter the quantity
+              sizes.includes("S") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "S").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "S" ? {size: "S", quantity: e.target.value} : item)
+                  )}
+                />
               )
             }
-          >
-            <p
-              className={`${
-                sizes.includes("S") ? "bg-teal-200" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              S
-            </p>
           </div>
 
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("M")
-                  ? prev.filter((item) => item !== "M")
-                  : [...prev, "M"]
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("M")
+                    ? prev.filter((item) => item !== "M")
+                    : [...prev, "M"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("M") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                M
+              </p>
+            </div>
+
+            {
+              // if M is included, add a field to enter the quantity
+              sizes.includes("M") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "M").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "M" ? {size: "M", quantity: e.target.value} : item)
+                  )}
+                />
               )
             }
-          >
-            <p
-              className={`${
-                sizes.includes("M") ? "bg-teal-200" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              M
-            </p>
           </div>
 
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("L")
-                  ? prev.filter((item) => item !== "L")
-                  : [...prev, "L"]
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("L")
+                    ? prev.filter((item) => item !== "L")
+                    : [...prev, "L"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("L") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                L
+              </p>
+            </div>
+
+            {
+              // if L is included, add a field to enter the quantity
+              sizes.includes("L") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "L").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "L" ? {size: "L", quantity: e.target.value} : item)
+                  )}
+                />
               )
             }
-          >
-            <p
-              className={`${
-                sizes.includes("L") ? "bg-teal-200" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              L
-            </p>
           </div>
 
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("XL")
-                  ? prev.filter((item) => item !== "XL")
-                  : [...prev, "XL"]
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("XL")
+                    ? prev.filter((item) => item !== "XL")
+                    : [...prev, "XL"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("XL") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                XL
+              </p>
+            </div>
+
+            {
+              // if XL is included, add a field to enter the quantity
+              sizes.includes("XL") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "XL").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "XL" ? {size: "XL", quantity: e.target.value} : item)
+                  )}
+                />
               )
             }
-          >
-            <p
-              className={`${
-                sizes.includes("XL") ? "bg-teal-200" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              XL
-            </p>
           </div>
 
-          <div
-            onClick={() =>
-              setSizes((prev) =>
-                prev.includes("XXL")
-                  ? prev.filter((item) => item !== "XXL")
-                  : [...prev, "XXL"]
+          <div className="flex gap-x-2">
+            <div
+              className="w-16 mb-2"
+              onClick={() =>
+                setSizes((prev) =>
+                  prev.includes("XXL")
+                    ? prev.filter((item) => item !== "XXL")
+                    : [...prev, "XXL"]
+                )
+              }
+            >
+              <p
+                className={`${
+                  sizes.includes("XXL") ? "bg-teal-200" : "bg-slate-200"
+                } px-3 py-1 cursor-pointer`}
+              >
+                XXL
+              </p>
+            </div>
+
+            {
+              // if XXL is included, add a field to enter the quantity
+              sizes.includes("XXL") && (
+                <input
+                  className="w-16 px-3 py-1 mb-2"
+                  type="number"
+                  placeholder="0"
+                  value={quantity.find(item => item.size === "XXL").quantity}
+                  onChange={(e) => setQuantity((prev) => 
+                    prev.map(item => item.size === "XXL" ? {size: "XXL", quantity: e.target.value} : item)
+                  )}
+                />
               )
             }
-          >
-            <p
-              className={`${
-                sizes.includes("XXL") ? "bg-teal-200" : "bg-slate-200"
-              } px-3 py-1 cursor-pointer`}
-            >
-              XXL
-            </p>
           </div>
         </div>
       </div>

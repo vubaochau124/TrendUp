@@ -26,6 +26,7 @@ const addProduct = async (req, res) => {
 
         // Parse sizes to ensure it's an array of objects with size and quantity
         const parsedSizes = JSON.parse(sizes);
+        console.log(parsedSizes);
 
         // Add product to the database
         const newProduct = await productModel.create({
