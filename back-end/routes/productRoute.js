@@ -22,7 +22,16 @@ productRouter.post(
   addProduct
 );
 productRouter.post("/remove/:id", removeProduct);
-productRouter.post("/edit/:id", editProduct);
+productRouter.post(
+  "/edit/:id",
+  upload.fields([
+    { name: "image1", maxCount: 1 },
+    { name: "image2", maxCount: 1 },
+    { name: "image3", maxCount: 1 },
+    { name: "image4", maxCount: 1 },
+  ]), 
+  editProduct
+);
 productRouter.get("/list", listProduct);
 productRouter.get("/:id", getProductById);
 
