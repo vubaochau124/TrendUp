@@ -3,34 +3,24 @@ import axios from 'axios';
 import { backendUrl } from '../../App';
 import { assets } from '../../assets/assets';
 import { toast } from 'react-toastify';
-
+import { useNavigate } from 'react-router-dom';
 
 const Category_add = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  
-  // Loại danh mục chính (Wearer hoặc Style)
-  const [categoryType, setCategoryType] = useState("Wearer");
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      // Gửi yêu cầu POST đến backend
-      if (categoryType === "Wearer"){
-        const response = await axios.post(backendUrl + "/api/categories/addwearer",{name, description});
-        if (response.data.sucess){
-          toast.success(response.data.message)
-        } else {
-          toast.error(response.data.message)
-        }
-      }
-      if (categoryType === "Style"){
-        const response = await axios.post(backendUrl + "/api/categories/addstyle", {name, description});
-        if (response.data.sucess){
-          toast.success(response.data.message)
-        } else {
-          toast.error(response.data.message)
-        }
+      const response = await axios.post(backendUrl + '/api/category/add', { name, description });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        setName("");
+        setDescription("");
+        navigate(-1);
+      } else {
+        toast.error(response.data.message);
       }
 
     } catch (error) {
@@ -64,19 +54,6 @@ const Category_add = () => {
           placeholder='Write content here' 
           required 
         />
-      </div>
-
-      {/* Chọn loại danh mục */}
-      <div>
-        <p className='mb-2'>Category type</p>
-        <select 
-          onChange={(e) => setCategoryType(e.target.value)} 
-          value={categoryType} 
-          className='w-full px-3 py-2'
-        >
-          <option value="Wearer">Wearer Category</option>
-          <option value="Style">Style Category</option>
-        </select>
       </div>
 
       {/* Nút thêm */}
