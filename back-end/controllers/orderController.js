@@ -8,6 +8,9 @@ const placeOrder = async (req, res) => {
     try {
         const { items, amount, address } = req.body;
         const userId = req.userId;
+        
+        console.log('Order Data:', req.body);
+        console.log('User ID:', userId);
 
         // Create a new order
         const newOrder = await orderModel.create({
@@ -48,8 +51,70 @@ const placeOrder = async (req, res) => {
 
 // placeOrder using Paypal function
 const placeOrderPaypal = async (req, res) => {
+    try {
+        const { items, amount, address } = req.body;
+        console.log('Order Data is:', req.body);
+        const userId = req.userId;
 
-}
+        // Create a new order
+        const newOrder = await orderModel.create({
+            userId,
+            items,
+            amount,
+            address,
+            status: 'Order Placed',
+            paymentMethod: 'Paypal',
+            payment: false,
+            date: new Date()
+        });
+
+        // Return the order ID
+        res.json({ success: true, message: 'Order placed successfully', orderId: newOrder.id });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+const payedPaypal = async (req, res) => {
+    try {
+        const { orderId, items } = req.body;
+        const userId = req.userId;
+        console.log('User ID:', userId)
+
+        // Log orderId to verify its structure
+        console.log('Received orderId:', orderId);
+
+        // Validate the received data
+        const [updated] = await orderModel.update({ payment: true }, { where: { id: orderId } });
+        if (updated === 0) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        for (const item of items) {
+            const product = await productModel.findByPk(item.id);
+            if (product) {
+                const sizes_changed = product.sizes.map(size => {
+                    if (size.size === item.size) {
+                        size.quantity -= item.quantity;
+                    }
+                    return size;
+                });
+                await productModel.update({ sizes: sizes_changed }, { where: { id: item.id } });
+                const updatedProduct = await productModel.findByPk(item.id);
+                console.log('Product after update:', updatedProduct.sizes); // Add logging
+            }
+        }
+
+        await userModel.update({ cartData : {}}, { where: { id: userId } });
+
+        // Respond with success
+        res.json({ success: true, message: 'Order payment updated successfully'});
+    } catch (error) {
+        console.error('Error in payedPaypal:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 const allOrders = async (req, res) => {
 
@@ -71,4 +136,4 @@ const updateStatus = async (req, res) => {
 
 }
 
-export { placeOrder, placeOrderPaypal, allOrders, userOrders, updateStatus }
+export { placeOrder, placeOrderPaypal, allOrders, userOrders, updateStatus, payedPaypal };

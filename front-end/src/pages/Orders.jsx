@@ -4,7 +4,7 @@ import Title from '../components/Title';
 import axios from 'axios';
 
 const Orders = () => {
-    const { token, currency } = useContext(ShopContext);
+    const { token, currency,backendUrl } = useContext(ShopContext);
     const [orderData, setOrderData] = useState([]);
 
     useEffect(() => {
