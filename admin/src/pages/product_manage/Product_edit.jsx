@@ -8,8 +8,6 @@ import { toast } from 'react-toastify';
 
 const Product_edit = () => {
   const { product_id } = useParams();
-  const navigate = useNavigate();
-
   let [image1, setImage1] = useState(false);
   let [image2, setImage2] = useState(false);
   let [image3, setImage3] = useState(false);
@@ -143,6 +141,7 @@ const Product_edit = () => {
 
       if (response.data.success){
         toast.success(response.data.message)
+        navigate(-1);
         navigate(-1);
       } else {
         toast.error(response.data.message)
