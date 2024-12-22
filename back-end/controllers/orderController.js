@@ -25,15 +25,19 @@ const placeOrder = async (req, res) => {
         for (const item of items) {
             const product = await productModel.findByPk(item.id);
             if (product) {
-                const sizes = product.sizes.map(size => {
+                const sizes_changed = product.sizes.map(size => {
                     if (size.size === item.size) {
                         size.quantity -= item.quantity;
                     }
                     return size;
                 });
-                await product.update({ sizes });
+                await productModel.update({ sizes: sizes_changed }, { where: { id: item.id } });
+                const updatedProduct = await productModel.findByPk(item.id);
+                console.log('Product after update:', updatedProduct.sizes); // Add logging
             }
         }
+
+        await userModel.update({ cartData : {}}, { where: { id: userId } });
 
         res.json({ success: true, message: 'Order placed successfully', order: newOrder });
     } catch (error) {
@@ -54,7 +58,6 @@ const allOrders = async (req, res) => {
 const userOrders = async (req, res) => {
     try {
         const userId = req.userId; // Get userId from the request object
-
         const orders = await orderModel.findAll({ where: { userId } });
 
         res.json({ success: true, orders });

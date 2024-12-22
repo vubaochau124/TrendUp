@@ -18,30 +18,37 @@ const ShopContextProvider = (props) => {
     const [token, setToken] = React.useState('');
     const navigate = useNavigate();
 
-    const addToCart = async (itemId,size) => {
+    const addToCart = async (itemId, size) => {
+        console.log('addToCart called with:', { itemId, size });
+
         if (!size) {
             toast.error('Please select a size');
             return;
         }
+
+        if (!itemId) {
+            toast.error('Invalid item ID');
+            return;
+        }
+
         let cartData = structuredClone(cartItems);
 
-        if (cartData[itemId]) {
-            if (cartData[itemId][size]) {
-                cartData[itemId][size] += 1;
-            } else {
-                cartData[itemId][size] = 1;
-            }
-        }
-        else {
+        if (!cartData[itemId]) {
             cartData[itemId] = {};
+        }
+
+        if (cartData[itemId][size]) {
+            cartData[itemId][size] += 1;
+        } else {
             cartData[itemId][size] = 1;
         }
+
         setCartItems(cartData);
 
         if (token) {
             try {
                 const response = await axios.post(
-                    'http://localhost:4000/api/cart/add',
+                    backendUrl + '/api/cart/add',
                     { itemId, size },
                     {
                         headers: {
@@ -57,7 +64,7 @@ const ShopContextProvider = (props) => {
         } else {
             toast.error('User not authenticated');
         }
-    }
+    };
 
     const getCartCount = () => {
         let totalCoount = 0;
@@ -84,7 +91,7 @@ const ShopContextProvider = (props) => {
         if (token) {
             try {
                 const response = await axios.post(
-                    'http://localhost:4000/api/cart/update',
+                    backendUrl + '/api/cart/update',
                     { itemId, size, quantity },
                     {
                         headers: {
@@ -105,7 +112,7 @@ const ShopContextProvider = (props) => {
     const getUserCart = async (token) => {
         try {
             const response = await axios.get(
-                'http://localhost:4000/api/cart/get',
+                backendUrl + '/api/cart/get',
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -143,7 +150,7 @@ const ShopContextProvider = (props) => {
 
     const getProductsData = async () => {
         try {
-            const response = await axios.get('http://localhost:4000' + '/api/product/list');
+            const response = await axios.get(backendUrl + '/api/product/list');
             if(response.data.success) {
                 setProducts(response.data.products);
             } else {
