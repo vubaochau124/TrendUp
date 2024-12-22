@@ -5,6 +5,7 @@ import { assets } from '../../assets/assets';
 import { backendUrl } from '../../App';
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Employee_edit = () => {
   const { employee_id } = useParams();
@@ -14,6 +15,7 @@ const Employee_edit = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [position, setPosition] = useState("");
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchEmployee = async () => {

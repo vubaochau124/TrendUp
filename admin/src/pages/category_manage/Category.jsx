@@ -5,23 +5,18 @@ import { toast } from 'react-toastify';
 import { backendUrl } from '../../App';
 
 const Category = ({ token }) => {
-  const [listStyle, setListStyle] = useState([]);
-  const [listWearer, setListWear] = useState([]);
+  const [listCategory, setListCategory] = useState([]);
   const navigate = useNavigate();
 
   const fetchList = async () => {
     try {
-      const response_style = await axios.get(backendUrl + '/api/categories/liststyle');
-      const response_wearer = await axios.get(backendUrl + '/api/categories/listwearer');
+      const response_category = await axios.get(backendUrl + '/api/category/list');
 
-      if (response_style.data.sucess) {
-        setListStyle(response_style.data.list_styles);
+      if (response_category.data.success) {
+        setListCategory(response_category.data.categories);
       } 
-      if (response_wearer.data.sucess) {
-        setListWear(response_wearer.data.list_wearer);
-      }
-      if (!response_style.data.sucess && !response_wearer.data.sucess){
-        toast.error(response_wearer.data.message);
+      if (!response_category.data.success){
+        toast.error(response_category.data.message);
       }
     } catch (error) {
       console.log(error);
@@ -29,24 +24,10 @@ const Category = ({ token }) => {
     }
   };
 
-  const removeStyle = async (name) => {
+  const remove = async (id) => {
     try {
-      const response = await axios.post(backendUrl + '/api/categories/removestyle', { name }, { headers: { token } });
-      if (response.data.sucess) {
-        toast.success(response.data.message);
-        await fetchList();
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(error.message);
-    }
-  }
-  const removeWearer = async (name) => {
-    try {
-      const response = await axios.post(backendUrl + '/api/categories/removewearer', { name }, { headers: { token } });
-      if (response.data.sucess) {
+      const response = await axios.post(backendUrl + `/api/category/delete/${id}`);
+      if (response.data.success) {
         toast.success(response.data.message);
         await fetchList();
       } else {
@@ -75,23 +56,23 @@ const Category = ({ token }) => {
 
         {/* -------------- Category List ---------------- */}
         {
-          listStyle.map((item, index) => (
+          listCategory.map((item, index) => (
             <div 
               className='grid grid-cols-[2fr_2fr_3fr_2fr] items-center gap-2 py-1 px-2 border text-sm' 
               key={index}
             >
               <p>{item.name}</p>
-              <p>{'Style'}</p>
+              <p>{item.type}</p>
               <p>{item.description}</p>
               <div className='flex justify-center items-center space-x-2'>
                 <p 
-                  onClick={() => removeStyle(item.name)} 
+                  onClick={() => remove(item.category_id)} 
                   className='cursor-pointer text-lg text-red-500'
                 >
                   X
                 </p>
                 <button
-                  onClick={() => navigate(`/Category_manage/Edit/${item.name}`)}
+                  onClick={() => navigate(`/Category_manage/Edit/${item.category_id}`)}
                   className='text-center bg-blue-500 text-white px-3 py-1 rounded-md text-xs'
                 >
                   Edit
@@ -106,38 +87,7 @@ const Category = ({ token }) => {
             </div>
           ))
         }
-        {
-          listWearer.map((item, index) => (
-            <div 
-              className='grid grid-cols-[2fr_2fr_3fr_2fr] items-center gap-2 py-1 px-2 border text-sm' 
-              key={index}
-            >
-              <p>{item.name}</p>
-              <p>{'Wearer'}</p>
-              <p>{item.description}</p>
-              <div className='flex justify-center items-center space-x-2'>
-                <p 
-                  onClick={() => removeWearer(item.name)} 
-                  className='cursor-pointer text-lg text-red-500'
-                >
-                  X
-                </p>
-                <button
-                  onClick={() => navigate(`/Category_manage/Edit/${item.name}`)}
-                  className='text-center bg-blue-500 text-white px-3 py-1 rounded-md text-xs'
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => navigate(`/Category_manage/ListProduct/${item.name}`)}
-                  className='text-center bg-blue-500 text-white px-3 py-1 rounded-md text-xs'
-                >
-                  View
-                </button>
-              </div>
-            </div>
-          ))
-        }
+        
       </div>
     </>
   );

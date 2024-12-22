@@ -13,7 +13,6 @@ const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await userModel.findOne({ where: { email } });
-
         if (!user) {
             return res.json({ success: false, message: 'User not found' });
         }
@@ -91,13 +90,20 @@ const loginEmployee = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await employeeModel.findOne({ where: { email: email } });
+        if (email === process.env.ADMIN_EMAIL && password == process.env.ADMIN_PASSWORD) {
+            const user_id = 0
+            const token = jwt.sign({ id: user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            return res.json({ success: true, token });
+        }
         if (!user) {
-            return res.json({ success: false, message: 'Invalid email or password' });
+            return res.json({ success: false, message: 'Invalid email' });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = (password === user.password);
+
         if (!isMatch) {
-            return res.json({ success: false, message: 'Invalid email or password' });
+            return res.json({ success: false, message: 'Invalid password' });
         }
 
         const token = createToken(user.id);

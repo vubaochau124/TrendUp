@@ -5,6 +5,7 @@ import {
   editProduct,
   removeProduct,
   getProductById,
+  getProductByType
 } from "../controllers/productController.js";
 import upload from "../middleware/multer.js";
 import adminAuth from "../middleware/adminAuth.js";
@@ -22,8 +23,15 @@ productRouter.post(
   addProduct
 );
 productRouter.post("/remove/:id", removeProduct);
-productRouter.post("/edit/:id", editProduct);
+productRouter.post("/edit/:id",
+  upload.fields([
+    { name: "image1", maxCount: 1 },
+    { name: "image2", maxCount: 1 },
+    { name: "image3", maxCount: 1 },
+    { name: "image4", maxCount: 1 },
+  ]), editProduct);
 productRouter.get("/list", listProduct);
 productRouter.get("/:id", getProductById);
+productRouter.get("/type/:category_name", getProductByType);
 
 export default productRouter;

@@ -59,8 +59,8 @@ const App = () => {
                 <Route path='/Product_manage/Edit/:product_id' element={<Product_edit token={token}/>} />
                 <Route path='/Category_manage/List' element={<Category token={token}/>} />
                 <Route path='/Category_manage/Add' element={<Category_add token={token}/>} />
-                <Route path='/Category_manage/Edit/:name' element={<Category_edit token={token}/>} />
-                <Route path='/Category_manage/ListProduct/:name' element={<Category_product token={token}/>} />
+                <Route path='/Category_manage/Edit/:category_id' element={<Category_edit token={token}/>} />
+                <Route path='/Category_manage/ListProduct/:category_name' element={<Category_product token={token}/>} />
                 <Route path='/Inventory' element={<Inventory token={token}/>} />
                 <Route path='/Import_manage' element={<Import_manage token={token}/>} />
               </Routes>

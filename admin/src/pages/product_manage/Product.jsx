@@ -26,7 +26,7 @@ const Product = ({ token }) => {
 
   const removeProduct = async (id) => {
     try {
-      const response = await axios.post(backendUrl + `/api/product/remove/${id}`, { headers: { token } });
+      const response = await axios.post(backendUrl + `/api/product/remove/${id}`);
       if (response.data.success) {
         toast.success(response.data.message);
         await fetchProducts();
@@ -44,41 +44,43 @@ const Product = ({ token }) => {
   }, []);
 
   return (
+
     <>
-      <p className='mb-2'>All Products List</p>
-      <div className='flex flex-col gap-2'>
+    <p className='mb-2'>All Products List</p>
+    <div className='flex flex-col gap-2'>
 
-        {/* -------------- List Table Title -------------- */}
-        <div className='hidden md:grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm'>
-          <b>Image</b>
-          <b>Name</b>
-          <b>Category</b>
-          <b>Subcategory</b>
-          <b>Price</b>
-          <b className='text-center'>Action</b>
-        </div>
-
-        {/* -------------- Product List ---------------- */}
-        {
-          products.map((item, index) => (
-            <div className='grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[2fr_1fr_1fr_1fr_1fr_0.5fr_0.5fr] items-center gap-2 py-1 px-2 border text-sm' key={index}>
-              <img className='w-3/4' src={item.image[0]} alt="image" />
-              <p>{item.name}</p>
-              <p>{item.category}</p>
-              <p>{item.subCategory}</p>
-              <p>{currency}{item.price}</p>
-              <p onClick={() => removeProduct(item.id)} className='text-right md:text-center cursor-pointer text-lg'>X</p>
-              <button
-                onClick={() => navigate(`/Product_manage/Edit/${item.id}`)}
-                className='text-center px-3 py-1 rounded-md'
-              >
-                Edit
-              </button>
-            </div>
-          ))
-        }
+      {/* -------------- List Table Title -------------- */}
+      <div className='hidden md:grid grid-cols-[1fr_1fr_1fr_1fr_1fr_1fr] items-center py-1 px-2 border bg-gray-100 text-sm'>
+        <b>Image</b>
+        <b>Name</b>
+        <b>Wearer</b>
+        <b>Style</b>
+        <b>Price</b>
+        <b className='text-center'>Action</b>
       </div>
-    </>
+
+      {/* -------------- Product List ---------------- */}
+      {
+        products.map((item, index) => (
+          <div className='grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_1fr_1fr_1fr_1fr_0.5fr_0.5fr] items-center gap-2 py-1 px-2 border text-sm' key={index}>
+            <img className='w-12' src={item.image[0]} alt="" />
+            <p>{item.name}</p>
+            <p>{item.category}</p>
+            <p>{item.subCategory}</p>
+            <p>{currency}{item.price}</p>
+            <p onClick={() => removeProduct(item.id)} className='text-right md:text-center cursor-pointer text-lg'>X</p>
+            {/* Nút bấm chuyển hướng */}
+            <button
+              onClick={() => navigate(`/Product_manage/Edit/${item.id}`)              } // Chuyển hướng với ID sản phẩm
+              className='text-center bg-blue-500 text-white px-3 py-1 rounded-md'
+            >
+              Edit
+            </button>
+          </div>
+        ))
+      }
+    </div>
+  </>
   );
 };
 

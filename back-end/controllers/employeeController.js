@@ -6,7 +6,6 @@ import { Op } from 'sequelize';
 const getEmployees = async (req, res) => {
     try {
         const employees = await employeeModel.findAll({
-            where: { employee_id: { [Op.ne]: 1 } },
             attributes: { exclude: ['password'] }
         });
         res.json({ success: true, employees });
