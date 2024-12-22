@@ -50,7 +50,7 @@ const Product_add = ({ token }) => {
       console.log(response.data);
       if (response.data.success) {
         setSubCategoryList(response.data.subCategories);
-        response.data.subCategories[0] ?? setSubCategory(response.data.subCategories[0].name);
+        setSubCategory(response.data.subCategories[0].name);
       } else {
         toast.error(response.data.message);
       }
