@@ -9,6 +9,7 @@ import {
     editSubCategory,
     deleteSubCategory,
     getSubCategoriesByCategoryId,
+    getSubCategoriesByCategoryName
 } from "../controllers/categoryController.js";
 
 const categoryRouter = express.Router();
@@ -21,10 +22,10 @@ categoryRouter.get("/list", getCategories);
 categoryRouter.get("/:id", getCategoryById);
 
 // subcategory
-// categoryRouter.get("/sublist/:id", getSubCategories);
 categoryRouter.post("/subadd", addSubCategory);
 categoryRouter.post("/subremove/:id", deleteSubCategory);
 categoryRouter.post("/subedit/:id", editSubCategory);
 categoryRouter.get("/sub/:id", getSubCategoriesByCategoryId);
+categoryRouter.get("/subname/:name", getSubCategoriesByCategoryName);
 
 export default categoryRouter;

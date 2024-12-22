@@ -190,7 +190,33 @@ const getSubCategoriesByCategoryId = async (req, res) => {
     }
 }
 
+const getSubCategoriesByCategoryName = async (req, res) => {
+    try {
+        const categoryName = req.params.name;
+        console.log("cat name: ", categoryName);
+        if (!categoryName) {
+            return res.json({ success: false, message: 'Category Name is required' });
+        }
+
+        const category = await categoryModel.findOne({
+            where: { name: categoryName }
+        });
+
+        if (category) {
+            const subCategories = await subCategoryModel.findAll({
+                where: { category_id: category.id }
+            });
+            res.json({ success: true, subCategories });
+        } else {
+            res.json({ success: false, message: 'Category not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
 export { 
     addCategory, editCategory, deleteCategory, getCategories, getCategoryById,
-    addSubCategory, editSubCategory, deleteSubCategory, getSubCategoriesByCategoryId
+    addSubCategory, editSubCategory, deleteSubCategory, getSubCategoriesByCategoryId, getSubCategoriesByCategoryName,
 };

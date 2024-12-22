@@ -15,6 +15,8 @@ const Product_edit = () => {
   let [image4, setImage4] = useState(false);
 
   let [images, setImages] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
+  const [subCategoryList, setSubCategoryList] = useState([]);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -43,6 +45,45 @@ const Product_edit = () => {
       return files;
   }
 
+  const fetchCategoryList = async () => {
+    try {
+      const response = await axios.get(backendUrl + "/api/category/list");
+      console.log(response.data);
+      if (response.data.success) {
+        setCategoryList(response.data.categories);
+        setCategory(response.data.categories[0].name);
+        fetchSubCategoryList(response.data.categories[0].name);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const fetchSubCategoryList = async (name) => {
+    try {
+      const response = await axios.get(
+        backendUrl + `/api/category/subname/${name}`
+      );
+      console.log(response.data);
+      if (response.data.success) {
+        setSubCategoryList(response.data.subCategories);
+        response.data.subCategories[0] ?? setSubCategory(response.data.subCategories[0].name);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const categoryChangeHandler = (name) => {
+    setCategory(name);
+    fetchSubCategoryList(name);
+  };
   
   const fetchProductDetails = async () => {
     try {
@@ -55,7 +96,7 @@ const Product_edit = () => {
       setDescription(product.description)
       setPrice(product.price)
       setCategory(product.category)
-      setSubCategory(product.product_style_name)
+      setSubCategory(product.subCategory)
       setBestseller(product.bestseller)
       product.sizes.map(item => {
         setSizes(prev => [...prev, item.size])
@@ -80,11 +121,6 @@ const Product_edit = () => {
       console.error("Error fetching product details:", error)
     }
   }
-  useEffect(() => {
-    if (product_id) {
-      fetchProductDetails()
-    }
-  }, [])
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -153,6 +189,13 @@ const Product_edit = () => {
     }
   }  
 
+  useEffect(() => {
+    fetchCategoryList();
+    if (product_id) {
+      fetchProductDetails()
+    }
+  }, [])
+
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3'>
       <div>
@@ -208,14 +251,16 @@ const Product_edit = () => {
         <div>
           <p className='mb-2'>Category</p>
           <select
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => categoryChangeHandler(e.target.value)}
             value={category}
             defaultValue={category}
             className="w-full px-3 py-2"
           >
-            <option value="men">Men</option>
-            <option value="women">Women</option>
-            <option value="kids">Kids</option>
+            {
+              categoryList.map((item, index) => (
+                <option key={index} value={item.name}>{item.name}</option>
+              ))
+            }
           </select>
         </div>
 
@@ -227,11 +272,11 @@ const Product_edit = () => {
             defaultValue={subCategory}
             className="w-full px-3 py-2"
           >
-            <option value="shirt">Shirt</option>
-            <option value="pants">Pants</option>
-            <option value="skirt">Skirt</option>
-            <option value="shoes">Shoes</option>
-            <option value="accessory">Accessory</option>
+            {
+              subCategoryList.map((item, index) => (
+                <option key={index} value={item.name}>{item.name}</option>
+              ))
+            }
           </select>
         </div>
 

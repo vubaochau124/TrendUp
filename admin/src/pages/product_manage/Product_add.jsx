@@ -13,20 +13,62 @@ const Product_add = ({ token }) => {
   const [image3, setImage3] = useState(false);
   const [image4, setImage4] = useState(false);
 
+  const [categoryList, setCategoryList] = useState([]);
+  const [subCategoryList, setSubCategoryList] = useState([]);
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("Men");
-  const [subCategory, setSubCategory] = useState("Shirt");
+  const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
   const [quantity, setQuantity] = useState([{size: "S", quantity: 0}, {size: "M", quantity: 0}, {size: "L", quantity: 0}, {size: "XL", quantity: 0}, {size: "XXL", quantity: 0}]);
+
+  const fetchCategoryList = async () => {
+    try {
+      const response = await axios.get(backendUrl + "/api/category/list");
+      console.log(response.data);
+      if (response.data.success) {
+        setCategoryList(response.data.categories);
+        setCategory(response.data.categories[0].name);
+        fetchSubCategoryList(response.data.categories[0].name);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const fetchSubCategoryList = async (name) => {
+    try {
+      const response = await axios.get(
+        backendUrl + `/api/category/subname/${name}`
+      );
+      console.log(response.data);
+      if (response.data.success) {
+        setSubCategoryList(response.data.subCategories);
+        response.data.subCategories[0] ?? setSubCategory(response.data.subCategories[0].name);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  const categoryChangeHandler = (name) => {
+    setCategory(name);
+    fetchSubCategoryList(name);
+  };
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
       const formData = new FormData();
-
 
       formData.append("name", name);
       formData.append("description", description);
@@ -69,6 +111,10 @@ const Product_add = ({ token }) => {
       toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    fetchCategoryList();
+  }, []);
 
   return (
     <form
@@ -165,13 +211,16 @@ const Product_add = ({ token }) => {
         <div>
           <p className="mb-2">Category</p>
           <select
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => categoryChangeHandler(e.target.value)}
             value={category}
+            defaultValue={""}
             className="w-full px-3 py-2"
           >
-            <option value="men">Men</option>
-            <option value="women">Women</option>
-            <option value="kids">Kids</option>
+            {categoryList.map((item) => (
+              <option value={item.name} key={item.id}>
+                {item.name}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -182,11 +231,13 @@ const Product_add = ({ token }) => {
             value={subCategory}
             className="w-full px-3 py-2"
           >
-            <option value="shirt">Shirt</option>
-            <option value="pants">Pants</option>
-            <option value="skirt">Skirt</option>
-            <option value="shoes">Shoes</option>
-            <option value="accessory">Accessory</option>
+            {
+              subCategoryList.map((item) => (
+                <option value={item.name} key={item.id}>
+                  {item.name}
+                </option>
+              ))
+            }
           </select>
         </div>
 
