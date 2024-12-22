@@ -92,9 +92,9 @@ const loginEmployee = async (req, res) => {
         const user = await employeeModel.findOne({ where: { email: email } });
         if (email === process.env.ADMIN_EMAIL && password == process.env.ADMIN_PASSWORD) {
             const user_id = 0
-            const token = jwt.sign({ id: user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-            return res.json({ success: true, token });
+            const token = jwt.sign({ role: "admin" }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const mess = {"token": token, "role": "admin"}
+            return res.json({ success: true, message: mess});
         }
         if (!user) {
             return res.json({ success: false, message: 'Invalid email' });
@@ -106,8 +106,9 @@ const loginEmployee = async (req, res) => {
             return res.json({ success: false, message: 'Invalid password' });
         }
 
-        const token = createToken(user.id);
-        res.json({ success: true, token });
+        const token = createToken(user.position);
+        const mess = {"token": token, "role": user.position}
+        return res.json({ success: true, message: mess})
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

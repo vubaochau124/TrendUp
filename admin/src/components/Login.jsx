@@ -3,7 +3,7 @@ import { backendUrl } from '../App'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
-const Login = ({setToken}) => {
+const Login = ({setToken, setRole}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -13,10 +13,12 @@ const Login = ({setToken}) => {
       console.log('Submitting login request:', { email, password });
       const response = await axios.post(backendUrl + '/api/user/employee', { email, password });
 
-      console.log('Response:', response.data);
+      console.log('Response:', response.data.message);
 
       if (response.data.success) {
-        setToken(response.data.token);
+        setToken(response.data.message["token"]);
+        setRole(response.data.message["role"]);
+        console.log(response.data)
         toast.success('Login successful');
       } else {
         toast.error(response.data.message);

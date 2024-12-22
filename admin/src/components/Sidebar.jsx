@@ -67,18 +67,18 @@ const MenuItem = ({ item, isSubRoute }) => {
   )
 }
 
-const Sidebar = () => {
+const Sidebar = ({role}) => {
   const location = useLocation();
 
   // Cấu trúc menu data
-  const menuItems = [
-    // {
+  const menuItems = {
+    // "admin": [{
     //   title: 'Home',
     //   route: '/Home'
     // },
-    {
+    "admin": [{
       title: 'Employee Management',
-      route: '/Employee_manage',
+      route: '/Admin/Employee_manage',
       submenu: [
         { title: 'Employee list', route: 'List' },
         { title: 'Add Employee ', route: 'Add' },
@@ -87,11 +87,11 @@ const Sidebar = () => {
     },
     {
       title: 'Order Management',
-      route: '/Order_manage',
+      route: '/Admin/Order_manage',
     },
     {
       title: 'Product Management',
-      route: '/Product_manage',
+      route: '/Admin/Product_manage',
       submenu: [
         { title: 'Product list', route: 'List' },
         { title: 'Add product', route: 'Add' },
@@ -100,7 +100,7 @@ const Sidebar = () => {
     },
     {
       title: 'Category Management',
-      route: '/Category_manage',
+      route: '/Admin/Category_manage',
       submenu: [
         { title: 'Category list', route: 'List' },
         { title: 'Add category', route: 'Add' },
@@ -109,23 +109,41 @@ const Sidebar = () => {
     },
     {
       title: 'Inventory Management',
-      route: '/Inventory'
+      route: '/Admin/Inventory'
     },
     {
       title: 'Import Management',
-      route: '/Import_manage',
+      route: '/Admin/Import_manage',
     },
-  ];
+  ], 
+  "sale": [
+    {
+      title: 'All Order',
+      route: '/'
+    },
+    {
+      title: 'Confirmation Order',
+      route: '/Sale/Confirm',
+    },
+    {
+      title: 'Status Order',
+      route: '/Sale/Status'
+    },
+    {
+      title: 'Completion Order',
+      route: '/Sale/Complete',
+    },
+  ]};
 
   // Kiểm tra xem có đang ở route của submenu nào không
-  const isSubRoute = menuItems
+  const isSubRoute = menuItems[role]
     .filter(item => item.submenu)
     .some(item => location.pathname.includes(item.route));
 
   return (
     <div className='w-[20%] min-h-screen border-r-2'>
       <div className='flex flex-col gap-1 pt-1 pl-[5%] pr-[5%] text-[15px]'>
-        {menuItems.map((item, index) => (
+        {menuItems[role].map((item, index) => (
           <MenuItem
             key={index}
             item={item}

@@ -5,7 +5,6 @@ import { assets } from '../assets/assets';
 import { ShopContext } from '../context/ShopContext';
 import { toast } from 'react-toastify';
 import { PayPalButtons } from "@paypal/react-paypal-js";
-import PaypalCheckoutButton from '../components/PaypalCheckoutButton';
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState('COD');
@@ -88,6 +87,14 @@ const PlaceOrder = () => {
     }
   };
 
+  // const handleApprove = (data, actions) => {
+  //   return actions.order.capture().then(details => {
+  //     console.log('Payment approved:', details);
+  //     setCartItems({});
+  //     navigate('/orders');
+  //   });
+  // };
+
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
       {/* Left Side */}
@@ -138,7 +145,18 @@ const PlaceOrder = () => {
         <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
           <div className='bg-white p-4 rounded'>
             <button onClick={() => setOpen(false)} className='mb-4 p-2 bg-red-500 text-white'>Close</button>
-            <PaypalCheckoutButton orderData={orderData}/>
+            <PayPalButtons orderData
+              // createOrder={(data, actions) => {
+              //   return actions.order.create({
+              //     purchase_units: [{
+              //       amount: {
+              //         value: orderData.amount // Use the amount from orderData
+              //       }
+              //     }]
+              //   });
+              // }}
+              // onApprove={handleApprove}
+            />
           </div>
         </div>
       )}

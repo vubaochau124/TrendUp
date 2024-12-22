@@ -26,6 +26,10 @@ const addProduct = async (req, res) => {
 
         // Parse sizes to ensure it's an array of objects with size and quantity
         const parsedSizes = JSON.parse(sizes);
+        let formatSizes = []
+        for (const s of parsedSizes) {
+            formatSizes.push({"size": s, "quantity": 0})
+        }
 
         // Add product to the database
         const newProduct = await productModel.create({
@@ -35,7 +39,7 @@ const addProduct = async (req, res) => {
             image: imagesUrl, // Ensure image is stored as JSON
             category,
             subCategory,
-            sizes: parsedSizes, // Store sizes as an array of objects
+            sizes: formatSizes, // Store sizes as an array of objects
             bestseller: bestseller === 'true' ? true : false, // Convert string to boolean
         });
 
@@ -62,7 +66,7 @@ const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         
-        const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
+        const { name, description, price, category, subCategory, sizes, oldSizes, bestseller } = req.body;
         
         // Parse sizes to ensure it's an array of objects with size and quantity
         // const parsedSizes = JSON.parse(sizes);
@@ -85,6 +89,20 @@ const editProduct = async (req, res) => {
           );
         console.log(imagesUrl);
         const parsedSizes = JSON.parse(sizes);
+        let formatSizes = [];
+        const UnchangeSize = {}
+        for (const s of oldSizes) {
+            sizeName = s.size;
+            sizeQuantity = s.quantity
+            UnchangeSize[sizeName] = sizeQuantity
+        }
+        for (const s of parsedSizes) {
+            if (UnchangeSize.includes(s)){
+                formatSizes.push({"size": s, "quantity":UnchangeSize.s})
+            } else {
+                formatSizes.push({"size": s, "quantity":0})
+            }
+        }
         console.log(parsedSizes)
         const updatedProduct = await productModel.update(
             {
@@ -188,4 +206,28 @@ const getProductByType = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
-export { listProduct, addProduct, editProduct, removeProduct, getProductById, getProductByType}
+
+const editInventory = async (req, res) => {
+    try {
+        const productId = req.params.product_id
+        const {formatSizes} = req.body
+        const parsedSizes = formatSizes;
+        const product = await productModel.update(
+            {
+                sizes: parsedSizes, // Đảm bảo đây là dữ liệu hợp lệ, ví dụ: array hoặc JSON
+            },
+            {
+                where: { id: productId }, // Điều kiện tìm kiếm sản phẩm
+            }
+        );
+        if (product) {
+            res.json({ success: true, product });
+        } else {
+            res.json({ success: false, message: 'Product not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+export { listProduct, addProduct, editProduct, removeProduct, getProductById, getProductByType, editInventory}

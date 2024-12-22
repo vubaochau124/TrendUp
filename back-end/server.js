@@ -13,14 +13,14 @@ import categoryRouter from './routes/categoryRoute.js';
 
 //app config
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 connectCloudinary();
 connectDB()
 
 //middleware
 app.use(express.json());
 app.use(cors());
-// app.use(express.static('dist'));
+app.use(express.static('dist'));
 
 //api endpoints
 // user endpoints

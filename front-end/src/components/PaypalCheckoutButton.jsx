@@ -1,23 +1,45 @@
 import React, { useState, useContext } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
-import { toast } from 'react-toastify';
 import { ShopContext } from '../context/ShopContext';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-const PaypalCheckoutButton = ({ orderData }) => {
+const PaypalCheckoutButton = (props) => {
+    const { product } = props;
+    const { cartItems, products, token, setCartItems, getCartAmount } = useContext(ShopContext);
+    const navigate = useNavigate();
+
     const [paidFor, setPaidFor] = useState(false);
     const [error, setError] = useState(null);
-    const { backendUrl, token, setCartItems, navigate } = useContext(ShopContext);
-    const [orderId, setOrderId] = useState(null);
 
-    const amount = orderData.amount;
-    const items = orderData.items;
+    const handleApprove = async (orderID) => {
+        setPaidFor(true);
 
-    const createOrder = async (data, actions) => {
         try {
-            console.log('orderData 1 before JSON.stringify:', orderData);
-            // Call the /api/order/paypal endpoint to create an order
-            const response = await fetch(`${backendUrl}/api/order/paypal`, {
+            let orderItems = [];
+
+            for (const items in cartItems) {
+                for (const item in cartItems[items]) {
+                    if (cartItems[items][item] > 0) {
+                        const itemInfo = structuredClone(products.find(product => product.id === parseInt(items)));
+                        if (itemInfo) {
+                            itemInfo.size = item;
+                            itemInfo.quantity = cartItems[items][item];
+                            orderItems.push(itemInfo);
+                        }
+                    }
+                }
+            }
+
+            let orderData = {
+                address: product.address,
+                items: orderItems,
+                amount: getCartAmount() + product.delivery_fee,
+                paymentMethod: 'Paypal',
+                paymentDetails: { orderID }
+            };
+
+            const response = await fetch(backendUrl + '/api/order/paypal', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -25,64 +47,13 @@ const PaypalCheckoutButton = ({ orderData }) => {
                 },
                 body: JSON.stringify(orderData)
             });
-            console.log('orderData 1 after JSON.stringify:', JSON.stringify(orderData));
 
             if (response.ok) {
-                const { orderId } = await response.json();
-                console.log('orderId:', orderId);
-                console.log(typeof orderId);
-                setOrderId(orderId);
-                localStorage.setItem('orderId', orderId); // Store orderId in localStorage
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: orderData.amount // Use the amount from orderData
-                        }
-                    }]
-                });
-            } else {
-                const errorData = await response.json().catch(() => ({ message: 'Failed to parse error response' }));
-                toast.error(errorData.message);
-                return actions.reject();
-            }
-        } catch (error) {
-            console.log(error);
-            toast.error(error.message);
-            return actions.reject();
-        }
-    };
-
-    const handleApprove = async (data, actions) => {
-        try {
-            //const order = await actions.order.capture();
-            setPaidFor(true);
-
-            // Retrieve orderId from localStorage
-            const orderId = localStorage.getItem('orderId');
-
-            // Log orderId before sending
-            console.log('orderId before sending:', orderId);
-
-            // Call the /api/order/payed-paypal endpoint with the orderId
-            const response = await axios.post(`${backendUrl}/api/order/payed-paypal`, 
-                { orderId, items },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            // Log orderId after sending
-            console.log('orderId after sending:', orderId);
-
-            if (response.data.success) {
                 setCartItems({});
                 navigate('/orders');
             } else {
-                console.log(response.data.message);
-                toast.error(response.data.message);
+                const errorData = await response.json();
+                toast.error(errorData.message);
             }
         } catch (error) {
             console.log(error);
@@ -99,10 +70,40 @@ const PaypalCheckoutButton = ({ orderData }) => {
     }
 
     return (
-        <PayPalScriptProvider>
+        <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_REACT_APP_PAYPAL_CLIENT_ID }}>
             <PayPalButtons
-                createOrder={createOrder}
-                onApprove={handleApprove}
+                onClick={(data, actions) => {
+                    const hasAlreadyBoughtCourse = false;
+                    if (hasAlreadyBoughtCourse) {
+                        setError("You already bought this course");
+                        return actions.reject();
+                    } else {
+                        return actions.resolve();
+                    }
+                }}
+                // createOrder={(data, actions) => {
+                //     return actions.order.create({
+                //         purchase_units: [
+                //             {
+                //                 description: product.description,
+                //                 amount: {
+                //                     value: product.price,
+                //                 },
+                //             },
+                //         ],
+                //     });
+                // }}
+                onApprove={async (data, actions) => {
+                    const order = await actions.order.capture();
+                    console.log("order", order);
+
+                    handleApprove(data.orderID);
+                }}
+                onCancel={() => {}}
+                onError={(err) => {
+                    setError(err);
+                    console.log("PayPal Checkout onError", err);
+                }}
             />
         </PayPalScriptProvider>
     );

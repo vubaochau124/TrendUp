@@ -5,7 +5,8 @@ import {
   editProduct,
   removeProduct,
   getProductById,
-  getProductByType
+  getProductByType,
+  editInventory
 } from "../controllers/productController.js";
 import upload from "../middleware/multer.js";
 import adminAuth from "../middleware/adminAuth.js";
@@ -33,5 +34,6 @@ productRouter.post("/edit/:id",
 productRouter.get("/list", listProduct);
 productRouter.get("/:id", getProductById);
 productRouter.get("/type/:category_name", getProductByType);
+productRouter.post("/editinventory/:product_id", editInventory);
 
 export default productRouter;
