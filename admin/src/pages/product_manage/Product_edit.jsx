@@ -2,22 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { assets } from '../../assets/assets'
 import axios from 'axios'
 import { backendUrl } from '../../App';
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 //import {backendUrl} from '../App.js'
 
 const Product_edit = () => {
   const { product_id } = useParams();
+  const navigate = useNavigate();
+
   let [image1, setImage1] = useState(false);
   let [image2, setImage2] = useState(false);
   let [image3, setImage3] = useState(false);
   let [image4, setImage4] = useState(false);
 
+  let [images, setImages] = useState([]);
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [wearerCategory, setWearerCategory] = useState("Men");
-  const [styleCategory, setStyleCategory] = useState("Topwear");
+  const [category, setCategory] = useState("Men");
+  const [subCategory, setSubCategory] = useState("Shirt");
   const [wearerList, setWearerList] = useState([]); 
   const [styleList, setStyleList] = useState([]); 
   const [bestseller, setBestseller] = useState(false);
@@ -38,41 +42,42 @@ const Product_edit = () => {
   
   const fetchProductDetails = async () => {
     try {
-      const response = await axios.post(backendUrl + "/api/product/single", { product_id })
-      const response_size = await axios.post(backendUrl + "/api/product/sizes", { product_id } )
-      const response_style = await axios.get(backendUrl + '/api/categories/liststyle'); // URL API backend
-      setStyleList(response_style.data.list_styles); // Lưu danh sách vào state
+      const response = await axios.get(backendUrl + `/api/product/${product_id}`)
+      // const response_size = await axios.post(backendUrl + "/api/product/sizes", { product_id } )
+      // const response_style = await axios.get(backendUrl + '/api/categories/liststyle'); // URL API backend
+      // setStyleList(response_style.data.list_styles); // Lưu danh sách vào state
 
-      const response_wearer = await axios.get(backendUrl + '/api/categories/listwearer'); // URL API backend
-      setWearerList(response_wearer.data.list_wearer); // Lưu danh sách vào state
+      // const response_wearer = await axios.get(backendUrl + '/api/categories/listwearer'); // URL API backend
+      // setWearerList(response_wearer.data.list_wearer); // Lưu danh sách vào state
       
-      
-      const product = response.data.message;
-      let list_sizes = [];
-      for(let i = 0; i < response_size.data.message.length; i++){
-        list_sizes.push(response_size.data.message[i].size)
-      }
-      
+      const product = response.data.product;
+      console.log(product)
+
+      // let list_sizes = [];
+      // for(let i = 0; i < response_size.data.message.length; i++){
+      //   list_sizes.push(response_size.data.message[i].size)
+      // }
       
       setName(product.name)
       setDescription(product.description)
       setPrice(product.price)
-      setWearerCategory(product.person_type_name)
-      setStyleCategory(product.product_style_name)
+      setCategory(product.category)
+      setSubCategory(product.product_style_name)
       setBestseller(product.bestseller)
-      setSizes(list_sizes)
+      setSizes(product.sizes)
 
-      const images = product.images ? product.images.split(";") : []
+      const images = product.image ? product.image : []
+      setImages(images)
+      console.log("Images:", images);
+
       convertToFiles(images).then(files => {
-        console.log("Converted Files:", files); // Các phần tử của mảng bây giờ là các File
+        console.log("Converted Files:", files); // Các phần tử của mảng bây giờ là các Blob
       });
       
-      setImage1(images[0])
-      setImage2(images[1])
-      setImage3(images[2])
-      setImage4(images[3])
-      
-      console.log(image1, images[0])
+      if (images[0]) setImage1(images[0])
+      if (images[1]) setImage2(images[1])
+      if (images[2]) setImage3(images[2])
+      if (images[3]) setImage4(images[3])
     } catch (error) {
       console.error("Error fetching product details:", error)
     }
@@ -80,9 +85,8 @@ const Product_edit = () => {
   useEffect(() => {
     if (product_id) {
       fetchProductDetails()
-      // console.log(name)
     }
-  }, [product_id])
+  }, [])
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -93,8 +97,8 @@ const Product_edit = () => {
       formData.append("name", name)
       formData.append("description", description)
       formData.append("price", price)
-      formData.append("persontype", wearerCategory)
-      formData.append("productstyle", styleCategory)
+      formData.append("category", category)
+      formData.append("subCategory", subCategory)
       formData.append("sizes", JSON.stringify(sizes))
       formData.append("bestseller", bestseller)
       
@@ -102,36 +106,44 @@ const Product_edit = () => {
         const response = await fetch(image1); // Lấy file từ URL
         const blob = await response.blob();
         setImage1(blob)
+        image1 && formData.append("image1", images[0])
+      } else {
+        image1 && formData.append("image1", image1)
       }
 
       if (typeof image2 === 'string') {
         const response = await fetch(image2); // Lấy file từ URL
         const blob = await response.blob();
         setImage2(blob)
+        image2 && formData.append("image2", images[1])
+      } else {
+        image2 && formData.append("image2", image2)
       }
 
       if (typeof image3 === 'string') {
         const response = await fetch(image3); // Lấy file từ URL
         const blob = await response.blob();
         setImage3(blob)
+        image3 && formData.append("image3", images[2])
+      } else {
+        image3 && formData.append("image3", image3)
       }
 
       if (typeof image4 === 'string') {
         const response = await fetch(image4); // Lấy file từ URL
         const blob = await response.blob();
         setImage4(blob)
+        image4 && formData.append("image4", images[3])
+      } else {
+        image4 && formData.append("image4", image4)
       }
-      image1 && formData.append("image1", image1)
-      image2 && formData.append("image2", image2)
-      image3 && formData.append("image3", image3)
-      image4 && formData.append("image4", image4)
 
-      const response = await axios.post(backendUrl + "/api/product/edit",formData)
-      for (let pair of formData.entries()) {
-        console.log(pair[0]+ ': ' + pair[1]);
-      }
+      const response = await axios.post(backendUrl + `/api/product/edit/${product_id}`,formData)
+      console.log(formData);
+
       if (response.data.success){
         toast.success(response.data.message)
+        navigate(-1);
       } else {
         toast.error(response.data.message)
       }
@@ -195,24 +207,32 @@ const Product_edit = () => {
 
       <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
         <div>
-          <p className='mb-2'>Wearer category</p>
-          <select onChange={(e) => setWearerCategory(e.target.value)} value={wearerCategory} className='w-full px-3 py-2'>
-            {Array.isArray(wearerList) && wearerList.map((wearer) => (
-              <option key={wearer.id} value={wearer.name}>
-                {wearer.name}
-              </option>
-            ))}
+          <p className='mb-2'>Category</p>
+          <select
+            onChange={(e) => setCategory(e.target.value)}
+            value={category}
+            defaultValue={category}
+            className="w-full px-3 py-2"
+          >
+            <option value="men">Men</option>
+            <option value="women">Women</option>
+            <option value="kids">Kids</option>
           </select>
         </div>
 
         <div>
-          <p className='mb-2'>Style category</p>
-          <select onChange={(e) => setStyleCategory(e.target.value)} value={styleCategory} className='w-full px-3 py-2'>
-            {Array.isArray(styleList) && styleList.map((style) => (
-              <option key={style.id} value={style.name}>
-                {style.name}
-              </option>
-            ))}
+          <p className='mb-2'>Sub category</p>
+          <select
+            onChange={(e) => setSubCategory(e.target.value)}
+            value={subCategory}
+            defaultValue={subCategory}
+            className="w-full px-3 py-2"
+          >
+            <option value="shirt">Shirt</option>
+            <option value="pants">Pants</option>
+            <option value="skirt">Skirt</option>
+            <option value="shoes">Shoes</option>
+            <option value="accessory">Accessory</option>
           </select>
         </div>
 
