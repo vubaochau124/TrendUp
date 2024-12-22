@@ -5,6 +5,7 @@ import { assets } from '../../assets/assets';
 import { backendUrl } from '../../App';
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Employee_edit = () => {
   const { employee_id } = useParams();
@@ -13,17 +14,17 @@ const Employee_edit = () => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [position, setPosition] = useState("admin");
+  const [position, setPosition] = useState("");
+  const navigate = useNavigate();
   
-  // Tải dữ liệu danh mục khi component được render
   useEffect(() => {
-    const fetchList = async () => {
+    const fetchEmployee = async () => {
       try {
-        // Gọi API để lấy thông tin chi tiết của danh mục
-        const response = await axios.post(backendUrl + "/api/employee/single", { employee_id })
+        const response = await axios.get(backendUrl + `/api/employee/fetch/${employee_id}`, { employee_id })
         
         const employeeData = response.data.message;
-        console.log(employeeData)
+        // console.log(employeeData)
+        console.log(response.data);
         if (employeeData !== undefined) {
           setName(employeeData.name);
           setDob(employeeData.dob.split('T')[0]);
@@ -39,15 +40,14 @@ const Employee_edit = () => {
     };
 
     if (employee_id) {
-      fetchList();
+      fetchEmployee();
     }
   }, [employee_id]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      // Gửi yêu cầu PUT đến backend để cập nhật
-      const response = await axios.post(backendUrl + "/api/employee/edit", {
+      const response = await axios.post(backendUrl + `/api/employee/edit/${employee_id}`, {
           employee_id,
           name,
           dob,
@@ -56,8 +56,9 @@ const Employee_edit = () => {
           password,
           position
       });
-      if (response.data.sucess){
+      if (response.data.success){
         toast.success(response.data.message)
+        navigate(-1);
       } else {
         toast.error(response.data.message)
       }

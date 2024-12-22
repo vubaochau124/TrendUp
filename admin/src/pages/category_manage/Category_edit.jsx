@@ -5,74 +5,56 @@ import { assets } from '../../assets/assets';
 import { backendUrl } from '../../App';
 import { useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Category_edit = ( ) => {
-  const { name } = useParams();
-  const [nameProduct, setNameProduct] = useState(name);
+  const { category_id } = useParams();
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  
   // Loại danh mục chính (Wearer hoặc Style)
-  const [categoryType, setCategoryType] = useState("Wearer");
-
+  const [type, setType] = useState("Category");
+  const navigate = useNavigate();
+  
   // Tải dữ liệu danh mục khi component được render
   useEffect(() => {
-    const fetchCategoryDetails = async () => {
-      try {
-        // Gọi API để lấy thông tin chi tiết của danh mục
-        const response_style = await axios.post(backendUrl + "/api/categories/singlestyle", { name })
-        const response_wearer = await axios.post(backendUrl + "/api/categories/singlewearer", { name })
-
-        const styleData = response_style.data.style;
-        const wearerData = response_wearer.data.wearer;
-        console.log(styleData)
-        if (styleData.length !== 0) {
-          setNameProduct(name)
-          setDescription(styleData[0].description);
-          setCategoryType('Style');
+      const fetchCategory = async () => {
+        try {
+          const response = await axios.get(backendUrl + `/api/category/fetch/${category_id}`, { category_id })
+          
+          const categoryData = response.data.message;
+          // console.log(categoryData)
+          console.log(response.data);
+          if (categoryData !== undefined) {
+            setName(categoryData.name);
+            setDescription(categoryData.description)
+            setType(categoryData.type)
+          }
+  
+        } catch (error) {
+          console.error("Can't load category:", error);
         }
-        if (wearerData.length !== 0) {
-          setNameProduct(name)
-          setDescription(wearerData[0].description);
-          setCategoryType('Wearer');
-        }
-
-      } catch (error) {
-        console.error("Lỗi khi tải chi tiết danh mục:", error);
+      };
+  
+      if (category_id) {
+        fetchCategory();
       }
-    };
-
-    if (name) {
-      fetchCategoryDetails();
-    }
-  }, [name]);
+  }, [category_id]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
       // Gửi yêu cầu PUT đến backend để cập nhật
-      if (categoryType === 'Wearer'){
-        const response = await axios.post(backendUrl + "/api/categories/editwearer", {
-          name,
-          nameProduct,
-          description
-        });
-        if (response.data.success){
-          toast.success(response.data.message)
-        } else {
-          toast.error(response.data.message)
-        }
-      } 
-      if (categoryType === 'Style'){
-        const response = await axios.post(backendUrl + "/api/categories/editstyle", {
-          name,
-          nameProduct,
-          description
-        });
-        if (response.data.sucess){
-          toast.success(response.data.message)
-        } else {
-          toast.error(response.data.message)
-        }
+      const response = await axios.post(backendUrl + `/api/category/edit/${category_id}`, {
+        category_id,
+        name,
+        description,
+        type
+      });
+      if (response.data.success){
+        toast.success(response.data.message)
+        navigate(-1);
+      } else {
+        toast.error(response.data.message)
       } 
 
     } catch (error) {
@@ -86,8 +68,8 @@ const Category_edit = ( ) => {
       <div className='w-full'>
         <p className='mb-2'>Category name</p>
         <input 
-          onChange={(e) => setNameProduct(e.target.value)} 
-          value={nameProduct} 
+          onChange={(e) => setName(e.target.value)} 
+          value={name} 
           className='w-full max-w-[500px] px-3 py-2' 
           type="text" 
           placeholder='Type here' 
@@ -111,12 +93,12 @@ const Category_edit = ( ) => {
       <div>
         <p className='mb-2'>Category type</p>
         <select 
-          onChange={(e) => setCategoryType(e.target.value)} 
-          value={categoryType} 
+          onChange={(e) => setType(e.target.value)} 
+          value={type} 
           className='w-full px-3 py-2'
         >
-          <option value="Wearer">Wearer Category</option>
-          <option value="Style">Style Category</option>
+          <option value="Category">Category</option>
+          <option value="Style category">Style Category</option>
         </select>
       </div>
 

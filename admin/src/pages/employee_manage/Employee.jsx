@@ -12,9 +12,8 @@ const Employee = () => {
   const fetchList = async () => {
     try {
       const response = await axios.get(backendUrl + '/api/employee/list');
-      console.log(response.data.message)
-      if (response.data.sucess) {
-        setListEmployee(response.data.message);
+      if (response.data.success) { 
+        setListEmployee(response.data.employees);
       } else {
         toast.error(response.data.message);
       }
@@ -26,8 +25,8 @@ const Employee = () => {
 
   const remove = async (id) => {
     try {
-      const response = await axios.post(backendUrl + '/api/employee/remove', { id });
-      if (response.data.sucess) {
+      const response = await axios.post(backendUrl + `/api/employee/delete/${id}`);
+      if (response.data.success) {
         toast.success(response.data.message);
         await fetchList();
       } else {
@@ -52,12 +51,10 @@ const Employee = () => {
           <b>Date of birth</b>
           <b>Phone</b>
           <b>Email</b>
-          <b>Password</b>
           <b>Position</b>
           <b className='text-center'>Action</b>
         </div>
 
-        {/* -------------- Category List ---------------- */}
         {
           listEmployee.map((item, index) => (
             <div 
@@ -68,7 +65,6 @@ const Employee = () => {
               <b>{item.dob.split('T')[0]}</b>
               <b>{item.phone}</b>
               <b>{item.email}</b>
-              <b>{item.password}</b>
               <b>{item.position}</b>
               <div className='flex justify-center items-center space-x-2'>
                 <p 

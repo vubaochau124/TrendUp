@@ -13,21 +13,24 @@ const Product_add = ({token}) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [wearerCategory, setWearerCategory] = useState("Men");
-  const [styleCategory, setStyleCategory] = useState("Topwear");
+  const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
   const [wearerList, setWearerList] = useState([]); 
-  const [styleList, setStyleList] = useState([]); 
+  const [styleList, setStyleList] = useState([]);
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
 
   useEffect(() => {
     const fetchStyleList = async () => {
       try {
-        const response_style = await axios.get(backendUrl + '/api/categories/liststyle'); // URL API backend
-        setStyleList(response_style.data.list_styles); // Lưu danh sách vào state
-
-        const response_wearer = await axios.get(backendUrl + '/api/categories/listwearer'); // URL API backend
-        setWearerList(response_wearer.data.list_wearer); // Lưu danh sách vào state
+        const style = "Style Category"
+        const response_style = await axios.get(backendUrl + `/api/category/type/${style}`); // URL API backend
+        setStyleList(response_style.data.categories); // Lưu danh sách vào state
+        setSubCategory(response_style.data.categories[0].name)
+        const wearer = "Category"
+        const response_wearer = await axios.get(backendUrl + `/api/category/type/${wearer}`); // URL API backend
+        setWearerList(response_wearer.data.categories); // Lưu danh sách vào state
+        setCategory(response_wearer.data.categories[0].name)
       } catch (error) {
         console.error('Failed to fetch styleList:', error);
       }
@@ -43,8 +46,8 @@ const Product_add = ({token}) => {
       formData.append("name", name)
       formData.append("description", description)
       formData.append("price", price)
-      formData.append("persontype", wearerCategory)
-      formData.append("productstyle", styleCategory)
+      formData.append("category", category)
+      formData.append("subCategory", subCategory)
       formData.append("sizes", JSON.stringify(sizes))
       formData.append("bestseller", bestseller)
       
@@ -55,6 +58,7 @@ const Product_add = ({token}) => {
       image4 && formData.append("image4", image4)
 
       const response = await axios.post(backendUrl + "/api/product/add",formData,{headers:{token}})
+      console.log(response)
       
       if (response.data.success){
         toast.success(response.data.message)
@@ -65,6 +69,8 @@ const Product_add = ({token}) => {
         setImage3(false)
         setImage4(false)
         setPrice('')
+        setSizes([])
+        setBestseller(false)
       } else {
         toast.error(response.data.message)
       }
@@ -117,8 +123,8 @@ const Product_add = ({token}) => {
       <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
 
         <div>
-          <p className='mb-2'>Wearer category</p>
-          <select onChange={(e) => setWearerCategory(e.target.value)} value={wearerCategory} className='w-full px-3 py-2'>
+          <p className='mb-2'>Category</p>
+          <select onChange={(e) => setCategory(e.target.value)} value={category} className='w-full px-3 py-2'>
             {Array.isArray(wearerList) && wearerList.map((wearer) => (
               <option key={wearer.id} value={wearer.name}>
                 {wearer.name}
@@ -129,7 +135,7 @@ const Product_add = ({token}) => {
 
         <div>
           <p className='mb-2'>Style category</p>
-          <select onChange={(e) => setStyleCategory(e.target.value)} value={styleCategory} className='w-full px-3 py-2'>
+          <select onChange={(e) => setSubCategory(e.target.value)} value={subCategory} className='w-full px-3 py-2'>
             {Array.isArray(styleList) && styleList.map((style) => (
               <option key={style.id} value={style.name}>
                 {style.name}
@@ -140,7 +146,7 @@ const Product_add = ({token}) => {
 
         <div>
           <p className='mb-2'>Product Price</p>
-          <input onChange={(e) => setPrice(e.target.value)} className='w-full px-3 py-2 sm:w-[120px]' type="Number" placeholder='25' />
+          <input onChange={(e) => setPrice(e.target.value)} className='w-full px-3 py-2 sm:w-[120px]' type="Number" placeholder='25' defaultValue={price}/>
         </div>
 
       </div>

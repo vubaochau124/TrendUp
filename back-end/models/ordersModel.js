@@ -65,4 +65,10 @@ sequelize.sync()
         console.error('This error occurred:', error);
     });
 
+// for (let i = 1; i < 10; i ++) {
+//     if (i % 4 === 0) {
+//         userId = 1;
+//         items = []
+//     }
+// }
 export default orderModel;

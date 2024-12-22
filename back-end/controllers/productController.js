@@ -61,19 +61,40 @@ const listProduct = async (req, res) => {
 const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
+        
         const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
-
+        
         // Parse sizes to ensure it's an array of objects with size and quantity
+        // const parsedSizes = JSON.parse(sizes);
+        const image1 = req.files && req.files.image1 ? req.files.image1[0] : req.body.image1; // Nếu là tệp tin thì lấy từ req.files, nếu là chuỗi thì lấy từ req.body
+        const image2 = req.files && req.files.image2 ? req.files.image2[0] : req.body.image2;
+        const image3 = req.files && req.files.image3 ? req.files.image3[0] : req.body.image3;
+        const image4 = req.files && req.files.image4 ? req.files.image4[0] : req.body.image4;
+        let images = [image1, image2, image3, image4].filter((item)=>item !== undefined)
+        
+        let imagesUrl = await Promise.all(
+            images.map(async (item) => {
+              if (typeof item === 'string') {
+                // Nếu là chuỗi, giả sử đây là URL của hình ảnh, bạn có thể bỏ qua bước upload hoặc xử lý tùy nhu cầu
+                return item;
+              } else {
+                let result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
+                return result.secure_url;
+              }
+            })
+          );
+        console.log(imagesUrl);
         const parsedSizes = JSON.parse(sizes);
-
+        console.log(parsedSizes)
         const updatedProduct = await productModel.update(
             {
                 name,
                 description,
                 price,
+                image: imagesUrl, // Ensure image is stored as JSON
                 category,
                 subCategory,
-                sizes: parsedSizes, // Store sizes as an array of objects
+                sizes: parsedSizes, //: parsedSizes, // Store sizes as an array of objects
                 bestseller: bestseller === 'true' ? true : false // Convert string to boolean
             },
             {
@@ -81,7 +102,7 @@ const editProduct = async (req, res) => {
             }
         );
 
-        if (updatedProduct[0]) {
+        if (updatedProduct) {
             res.json({ success: true, message: 'Product has been updated' });
         } else {
             res.json({ success: false, message: 'Product not found' });
@@ -95,7 +116,17 @@ const editProduct = async (req, res) => {
 // function for remove product
 const removeProduct = async (req, res) => {
     try {
-        const productId = req.body.id;
+        const productId = req.params.id;
+        const product = await productModel.findOne({
+            where: { id: productId }
+        });
+
+        // delete images from cloudinary
+        product.image.forEach(async (item) => {
+            const publicId = item.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+        });
+
         const result = await productModel.destroy({
             where: { id: productId }
         });
@@ -112,9 +143,9 @@ const removeProduct = async (req, res) => {
 }
 
 // function for remove product
-const singleProduct = async (req, res) => {
+const getProductById = async (req, res) => {
     try {
-        const productId = req.body.id;
+        const productId = req.params.id;
         if (!productId) {
             return res.json({ success: false, message: 'Product ID is required' });
         }
@@ -133,5 +164,28 @@ const singleProduct = async (req, res) => {
         res.json({ success: false, message: error.message });
     }
 }
+const getProductByType = async (req, res) => {
+    try {
+        const categoryId = req.params.category_name;
+        if (!categoryId) {
+            return res.json({ success: false, message: 'Product ID is required' });
+        }
 
-export { listProduct, addProduct, editProduct, removeProduct, singleProduct}
+        let product = await productModel.findAll({
+            where: { category: categoryId }
+        });
+        if (product.length === 0){
+            product = await productModel.findAll({
+                where: { subCategory: categoryId}});
+        }
+        if (product) {
+            res.json({ success: true, product });
+        } else {
+            res.json({ success: false, message: 'Product not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+export { listProduct, addProduct, editProduct, removeProduct, getProductById, getProductByType}

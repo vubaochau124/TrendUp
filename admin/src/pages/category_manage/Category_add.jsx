@@ -3,6 +3,8 @@ import axios from 'axios';
 import { backendUrl } from '../../App';
 import { assets } from '../../assets/assets';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const Category_add = () => {
@@ -10,28 +12,22 @@ const Category_add = () => {
   const [description, setDescription] = useState("");
   
   // Loại danh mục chính (Wearer hoặc Style)
-  const [categoryType, setCategoryType] = useState("Wearer");
-
+  const [type, setCategoryType] = useState("Category");
+  const navigate = useNavigate();
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
       // Gửi yêu cầu POST đến backend
-      if (categoryType === "Wearer"){
-        const response = await axios.post(backendUrl + "/api/categories/addwearer",{name, description});
-        if (response.data.sucess){
+        console.log(type)
+        const response = await axios.post(backendUrl + "/api/category/add", {name, description, type});
+        if (response.data.success){
           toast.success(response.data.message)
+          setName("")
+          setDescription("")
+          setCategoryType("Category")
         } else {
           toast.error(response.data.message)
         }
-      }
-      if (categoryType === "Style"){
-        const response = await axios.post(backendUrl + "/api/categories/addstyle", {name, description});
-        if (response.data.sucess){
-          toast.success(response.data.message)
-        } else {
-          toast.error(response.data.message)
-        }
-      }
 
     } catch (error) {
       console.error("Lỗi khi thêm danh mục:", error);
@@ -71,11 +67,11 @@ const Category_add = () => {
         <p className='mb-2'>Category type</p>
         <select 
           onChange={(e) => setCategoryType(e.target.value)} 
-          value={categoryType} 
+          value={type} 
           className='w-full px-3 py-2'
         >
-          <option value="Wearer">Wearer Category</option>
-          <option value="Style">Style Category</option>
+          <option value="Category">Category</option>
+          <option value="Style category">Style Category</option>
         </select>
       </div>
 
