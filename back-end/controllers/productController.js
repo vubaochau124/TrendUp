@@ -62,15 +62,47 @@ const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
-        console.log(req.body);
-        // Parse sizes to ensure it's an array of objects with size and quantity
-        // const parsedSizes = JSON.parse(sizes);
+
+        const image1 = req.files.image1 && req.files.image1[0];
+        const image2 = req.files.image2 && req.files.image2[0];
+        const image3 = req.files.image3 && req.files.image3[0];
+        const image4 = req.files.image4 && req.files.image4[0];
+
+        const uploadImages = [image1, image2, image3, image4].filter((item) => item !== undefined);
+        // fetch old images
+        const oldProduct = await productModel.findOne({
+            where: { id: productId }
+        });
+        const oldImages = oldProduct.image;
+
+        console.log("oldImages before add uploaded: ", oldImages);
+
+        if (image1 !== undefined) {
+            const url = await cloudinary.uploader.upload(image1.path, { resource_type: 'image' });
+            oldImages[0] = url.secure_url;
+        }
+        if (image2 !== undefined) {
+            const url = await cloudinary.uploader.upload(image2.path, { resource_type: 'image' });
+            oldImages[1] = url.secure_url;
+        }
+        if (image3 !== undefined) {
+            const url = await cloudinary.uploader.upload(image3.path, { resource_type: 'image' });
+            oldImages[2] = url.secure_url;
+        }
+        if (image4 !== undefined) {
+            const url = await cloudinary.uploader.upload(image4.path, { resource_type: 'image' });
+            oldImages[3] = url.secure_url;
+        }
+        
+        console.log("oldImages after add uploaded: ", oldImages);
+        oldImages.filter((item) => item !== undefined && item !== null);
 
         const updatedProduct = await productModel.update(
             {
                 name,
                 description,
                 price,
+                image: oldImages, // Ensure image is stored as JSON
                 category,
                 subCategory,
                 sizes, //: parsedSizes, // Store sizes as an array of objects
