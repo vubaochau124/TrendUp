@@ -43,7 +43,8 @@ const productModel = sequelize.define('Product', {
     },
     sizes: {
         type: DataTypes.JSON, // Use JSON to store an array
-        allowNull: false
+        allowNull: false,
+        defaultValue: []
     },
     bestseller: {
         type: DataTypes.BOOLEAN,

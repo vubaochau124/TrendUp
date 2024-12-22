@@ -1,14 +1,14 @@
-import React, { useContext, useState } from 'react'
-import Title from '../components/Title'
-import CartTotal from '../components/CartTotal'
-import { assets } from '../assets/assets'
-import { ShopContext } from '../context/ShopContext'
-import { toast } from 'react-toastify'
+import React, { useContext, useState } from 'react';
+import Title from '../components/Title';
+import CartTotal from '../components/CartTotal';
+import { assets } from '../assets/assets';
+import { ShopContext } from '../context/ShopContext';
+import { toast } from 'react-toastify';
+import { PayPalButtons } from "@paypal/react-paypal-js";
 
 const PlaceOrder = () => {
-
   const [method, setMethod] = useState('COD');
-  const { navigate, token, cartItems, setCartItems, getCartAmount, delivery_fee, products } = useContext(ShopContext);
+  const { navigate, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, backendUrl } = useContext(ShopContext);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -19,65 +19,81 @@ const PlaceOrder = () => {
     phone: ''
   });
 
+  const [orderData, setOrderData] = useState(null);
+  const [open, setOpen] = useState(false);
+
   const onChangeHandler = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-
     setFormData(data => ({ ...data, [name]: value }));
-  }
+  };
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-        let orderItems = [];
-
-        for (const items in cartItems) {
-            for (const item in cartItems[items]) {
-                if (cartItems[items][item] > 0) {
-                    const itemInfo = structuredClone(products.find(product => product.id === parseInt(items)));
-                    if (itemInfo) {
-                        itemInfo.size = item;
-                        itemInfo.quantity = cartItems[items][item];
-                        orderItems.push(itemInfo);
-                    }
-                }
+      let orderItems = [];
+      for (const items in cartItems) {
+        for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
+            const itemInfo = structuredClone(products.find(product => product.id === parseInt(items)));
+            if (itemInfo) {
+              itemInfo.size = item;
+              itemInfo.quantity = cartItems[items][item];
+              orderItems.push(itemInfo);
             }
+          }
         }
+      }
 
-        let orderData = {
-            address: formData,
-            items: orderItems,
-            amount: getCartAmount() + delivery_fee
-        };
+      let orderData = {
+        address: formData,
+        items: orderItems,
+        amount: getCartAmount() + delivery_fee
+      };
 
-        switch (method) {
-            // API call for cod payment
-            case 'COD':
-                const response = await fetch('http://localhost:4000/api/order/place', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify(orderData)
-                });
+      setOrderData(orderData);
 
-                if (response.ok) {
-                    setCartItems({});
-                    navigate('/orders');
-                } else {
-                    const errorData = await response.json();
-                    toast.error(errorData.message);
-                }
-                break;
-            default:
-                break;
-        }
+      switch (method) {
+        // API call for cod payment
+        case 'COD':
+          const response = await fetch(backendUrl + '/api/order/place', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(orderData)
+          });
+
+          if (response.ok) {
+            setCartItems({});
+            navigate('/orders');
+          } else {
+            const errorData = await response.json();
+            toast.error(errorData.message);
+          }
+          break;
+
+        case 'Paypal':
+          setOpen(true);
+          break;
+
+        default:
+          break;
+      }
     } catch (error) {
-        console.log(error);
-        toast.error(error.message);
+      console.log(error);
+      toast.error(error.message);
     }
-};
+  };
+
+  // const handleApprove = (data, actions) => {
+  //   return actions.order.capture().then(details => {
+  //     console.log('Payment approved:', details);
+  //     setCartItems({});
+  //     navigate('/orders');
+  //   });
+  // };
 
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
@@ -124,8 +140,28 @@ const PlaceOrder = () => {
           </div>
         </div>
       </div>
-    </form>
-  )
-}
 
-export default PlaceOrder
+      {open && orderData && (
+        <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+          <div className='bg-white p-4 rounded'>
+            <button onClick={() => setOpen(false)} className='mb-4 p-2 bg-red-500 text-white'>Close</button>
+            <PayPalButtons orderData
+              // createOrder={(data, actions) => {
+              //   return actions.order.create({
+              //     purchase_units: [{
+              //       amount: {
+              //         value: orderData.amount // Use the amount from orderData
+              //       }
+              //     }]
+              //   });
+              // }}
+              // onApprove={handleApprove}
+            />
+          </div>
+        </div>
+      )}
+    </form>
+  );
+};
+
+export default PlaceOrder;
