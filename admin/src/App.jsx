@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/ReactToastify.css'
 import Login from './components/Login'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
-import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Employee from './pages/employee_manage/Employee.jsx'
 import Customer from './pages/Customer'
@@ -15,9 +17,8 @@ import Category_add from './pages/category_manage/Category_add'
 import Category_edit from './pages/category_manage/Category_edit'
 import Category_product from './pages/category_manage/Category_product.jsx'
 import Inventory from './pages/Inventory'
+import Revenue from './pages/Revenue'
 import Import_manage from './pages/import_manage/Import_manage'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/ReactToastify.css'
 import Employee_edit from './pages/employee_manage/Employee_edit.jsx'
 import Employee_add from './pages/employee_manage/Employee_add.jsx'
 import Order_detail from './pages/order_manage/Order_detail.jsx'
@@ -48,7 +49,7 @@ const App = () => {
             <div className='w-[70%] mx-auto ml-[max(5vw,25px)] my-8 text-gray-600 text-base'>
               <Routes>
                 <Route path='/' element={<Employee token={token}/>} />
-                
+
                 <Route path='/Employee_manage/List' element={<Employee token={token}/>} />
                 <Route path='/Employee_manage/Add' element={<Employee_add token={token}/>} />
                 <Route path='/Employee_manage/Edit/:employee_id' element={<Employee_edit token={token}/>} />
@@ -68,6 +69,8 @@ const App = () => {
                 <Route path='/Category_manage/ListProduct/:id' element={<Category_product token={token}/>} />
 
                 <Route path='/Inventory' element={<Inventory token={token}/>} />
+
+                <Route path='/Revenue' element={<Revenue token={token}/>} />
 
                 <Route path='/Import_manage' element={<Import_manage token={token}/>} />
               </Routes>

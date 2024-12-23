@@ -112,6 +112,10 @@ const Sidebar = () => {
       route: '/Inventory'
     },
     {
+      title: 'Revenue',
+      route: '/Revenue',
+    },
+    {
       title: 'Import Management',
       route: '/Import_manage',
     },

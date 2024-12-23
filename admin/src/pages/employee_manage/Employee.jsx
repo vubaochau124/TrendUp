@@ -11,7 +11,10 @@ const Employee = () => {
 
   const fetchList = async () => {
     try {
-      const response = await axios.get(backendUrl + '/api/employee/list');
+      const response = await axios.get(backendUrl + '/api/employee/list', {
+        headers: { token: localStorage.getItem('token') },
+      });
+      console.log(response.data);
       if (response.data.success) { 
         setListEmployee(response.data.employees);
       } else {
@@ -25,7 +28,9 @@ const Employee = () => {
 
   const remove = async (id) => {
     try {
-      const response = await axios.post(backendUrl + `/api/employee/delete/${id}`);
+      const response = await axios.post(backendUrl + `/api/employee/delete/${id}`, {
+        headers: { token: localStorage.getItem('token') },
+      });
       if (response.data.success) {
         toast.success(response.data.message);
         await fetchList();

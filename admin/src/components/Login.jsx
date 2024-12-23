@@ -10,10 +10,10 @@ const Login = ({setToken}) => {
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
-      console.log('Submitting login request:', { email, password });
+      // console.log('Submitting login request:', { email, password });
       const response = await axios.post(backendUrl + '/api/user/employee', { email, password });
 
-      console.log('Response:', response.data);
+      // console.log('Response:', response.data);
 
       if (response.data.success) {
         setToken(response.data.token);

@@ -100,7 +100,7 @@ const loginEmployee = async (req, res) => {
             return res.json({ success: false, message: 'Invalid email or password' });
         }
 
-        const token = createToken(user.id);
+        const token = createToken(email + password);
         res.json({ success: true, token });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
