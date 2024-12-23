@@ -1,13 +1,16 @@
 import React from 'react'
 import { assets } from '../assets/assets'
 import { useNavigate } from 'react-router-dom';
-const Navbar = ({setToken}) => {
+const Navbar = ({setToken, setRole}) => {
   const navigate = useNavigate(); // Hook điều hướng
 
   const handleLogout = () => {
     // Xóa token trong localStorage và state
+    
     localStorage.removeItem('token');
-    setToken(''); // Reset token state nếu bạn dùng useState
+    localStorage.removeItem('role');
+    setToken('');
+    setRole('');// Reset token state nếu bạn dùng useState
     navigate('/'); // Điều hướng về trang chủ
   };
 

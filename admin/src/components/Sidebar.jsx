@@ -133,13 +133,31 @@ const Sidebar = ({role}) => {
       title: 'Completion Order',
       route: '/Sale/Complete',
     },
+  ],
+  "shipper": [
+    {
+      title: 'All Order',
+      route: '/'
+    },
+    {
+      title: 'Confirmation Order',
+      route: '/Sale/Confirm',
+    },
+    {
+      title: 'Status Order',
+      route: '/Sale/Status'
+    },
+    {
+      title: 'Completion Order',
+      route: '/Sale/Complete',
+    },
   ]};
-
+  console.log(role)
   // Kiểm tra xem có đang ở route của submenu nào không
   const isSubRoute = menuItems[role]
     .filter(item => item.submenu)
     .some(item => location.pathname.includes(item.route));
-
+  
   return (
     <div className='w-[20%] min-h-screen border-r-2'>
       <div className='flex flex-col gap-1 pt-1 pl-[5%] pr-[5%] text-[15px]'>

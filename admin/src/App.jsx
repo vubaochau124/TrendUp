@@ -10,6 +10,7 @@ import 'react-toastify/ReactToastify.css'
 import routesConfig from '../routesconfig.jsx'
 
 
+
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
 
 export const currency ='$'
@@ -21,6 +22,7 @@ const App = () => {
   useEffect(() => {
     localStorage.setItem('token', token);
     localStorage.setItem('role', role);
+    console.log(role, token)
     localStorage.removeItem('previousPage');
   }, [token]);
 
@@ -29,11 +31,11 @@ const App = () => {
   return (
     <div className="bg-gray-50 min-h-screen">
       <ToastContainer />
-      {token === "" ? (
+      {token === "" && role === ""? (
         <Login setToken={setToken} setRole={setRole} />
       ) : (
         <>
-        <Navbar setToken={setToken}/>
+        <Navbar setToken={setToken} setRole={setRole}/>
         <hr />
           <div className="flex w-full">
           <Sidebar role={role} />
@@ -41,7 +43,7 @@ const App = () => {
               <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                   {roleRoutes.map(({ path, element }) => {
-                    const Component = React.lazy(() => import(`./pages/${role}/${element}`));
+                    const Component = React.lazy(() => import(`./pages/${role}/${element}.jsx`));
                     return <Route key={path} path={path} element={<Component />} />;
                   })}
                 </Routes>
