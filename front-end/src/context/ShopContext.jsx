@@ -9,7 +9,7 @@ export const ShopContext = React.createContext();
 const ShopContextProvider = (props) => {
 
     const currency = '$';
-    const delivery_fee = 10;
+    const delivery_fee = 0.99;
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const [search, setSearch] = React.useState('');
     const [showSearch, setShowSearch] = React.useState(true);
