@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import axios from "axios";
-import { backendUrl } from "../App";
+import { backendUrl } from "../../App";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
 

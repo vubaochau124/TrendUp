@@ -77,6 +77,10 @@ const Sidebar = ({role}) => {
     //   route: '/Home'
     // },
     {
+      title: 'Revenue',
+      route: '/Revenue',
+    },
+    {
       title: 'Employee Management',
       route: '/Employee_manage',
       submenu: [

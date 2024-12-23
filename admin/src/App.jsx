@@ -39,6 +39,7 @@ import Import from './pages/warehouse/import/Import'
 import Export from './pages/warehouse/Export'
 import Export_complete from './pages/warehouse/Export_complete'
 import ImportAdd from './pages/warehouse/import/Import_add.jsx'
+import Revenue from './pages/admin/Revenue.jsx'
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
 
@@ -90,7 +91,7 @@ const App = () => {
                 <Route path='/Category_manage/ListProduct/:category_name' element={<Category_product token={token}/>} />
                 <Route path='/Inventory' element={<AdminInventory token={token}/>} />
                 <Route path='/Import_manage' element={<Import_manage token={token}/>} />
-                              
+                <Route path='/Revenue' element={<Revenue token={token}/>} />    
                             </>
                           );
                         } else if (role === "sale") {
