@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { backendUrl, currency } from '../../App';
 import { assets } from '../../assets/assets';
 
-const Complete = ({token}) => {
+const SaleComplete = ({token}) => {
   
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
@@ -100,4 +100,4 @@ const Complete = ({token}) => {
   );
 }
 
-export default Complete
+export default SaleComplete

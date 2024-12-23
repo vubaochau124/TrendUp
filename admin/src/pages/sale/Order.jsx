@@ -6,7 +6,7 @@ import { backendUrl, currency } from '../../App';
 import { assets } from '../../assets/assets';
 
 
-const Order = ({token}) => {
+const SaleOrder = ({token}) => {
 
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
@@ -100,5 +100,5 @@ const Order = ({token}) => {
   );
 }
 
-export default Order
+export default SaleOrder
 

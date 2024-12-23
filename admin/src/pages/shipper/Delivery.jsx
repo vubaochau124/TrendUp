@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { toast } from 'react-toastify';
-import { backendUrl, currency } from '../App';
-import { assets } from '../assets/assets';
+import { backendUrl, currency } from '../../App';
+import { assets } from '../../assets/assets';
 
 const Delivery = ({token}) => {
   

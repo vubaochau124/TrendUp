@@ -78,7 +78,7 @@ const Category = ({ token }) => {
                   Edit
                 </button>
                 <button
-                  onClick={() => navigate(`/Category_manage/ListProduct/${item.name}`)}
+                  onClick={() => navigate(`/Admin/Category_manage/ListProduct/${item.name}`)}
                   className='text-center bg-blue-500 text-white px-3 py-1 rounded-md text-xs'
                 >
                   View

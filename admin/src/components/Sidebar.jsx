@@ -71,14 +71,14 @@ const Sidebar = ({role}) => {
   const location = useLocation();
 
   // Cấu trúc menu data
-  const menuItems = {
-    // "admin": [{
+  let menuItems = [
+    // {
     //   title: 'Home',
     //   route: '/Home'
     // },
-    "admin": [{
+    {
       title: 'Employee Management',
-      route: '/Admin/Employee_manage',
+      route: '/Employee_manage',
       submenu: [
         { title: 'Employee list', route: 'List' },
         { title: 'Add Employee ', route: 'Add' },
@@ -87,11 +87,11 @@ const Sidebar = ({role}) => {
     },
     {
       title: 'Order Management',
-      route: '/Admin/Order_manage',
+      route: '/Order_manage',
     },
     {
       title: 'Product Management',
-      route: '/Admin/Product_manage',
+      route: '/Product_manage',
       submenu: [
         { title: 'Product list', route: 'List' },
         { title: 'Add product', route: 'Add' },
@@ -100,7 +100,7 @@ const Sidebar = ({role}) => {
     },
     {
       title: 'Category Management',
-      route: '/Admin/Category_manage',
+      route: '/Category_manage',
       submenu: [
         { title: 'Category list', route: 'List' },
         { title: 'Add category', route: 'Add' },
@@ -109,59 +109,99 @@ const Sidebar = ({role}) => {
     },
     {
       title: 'Inventory Management',
-      route: '/Admin/Inventory'
+      route: '/Inventory'
     },
     {
       title: 'Import Management',
-      route: '/Admin/Import_manage',
+      route: '/Import_manage',
     },
-  ], 
-  "sale": [
-    {
-      title: 'All Order',
-      route: '/'
-    },
-    {
-      title: 'Confirmation Order',
-      route: '/Sale/Confirm',
-    },
-    {
-      title: 'Status Order',
-      route: '/Sale/Status'
-    },
-    {
-      title: 'Completion Order',
-      route: '/Sale/Complete',
-    },
-  ],
-  "shipper": [
-    {
-      title: 'All Order',
-      route: '/'
-    },
-    {
-      title: 'Confirmation Order',
-      route: '/Sale/Confirm',
-    },
-    {
-      title: 'Status Order',
-      route: '/Sale/Status'
-    },
-    {
-      title: 'Completion Order',
-      route: '/Sale/Complete',
-    },
-  ]};
+  ]
+    if (role === "sale") {
+      menuItems = [
+        // {
+        //   title: 'Home',
+        //   route: '/Home'
+        // },
+        {
+          title: 'All Order',
+          route: '/'
+        },
+        {
+          title: 'Confirmation Order',
+          route: '/Confirm',
+        },
+        {
+          title: 'Status Order',
+          route: '/Status'
+        },
+        {
+          title: 'Completion Order',
+          route: '/Complete',
+        },
+      ]}
+  if (role === "shipper") {
+    menuItems =  [
+      // {
+      //   title: 'Home',
+      //   route: '/Home'
+      // },
+      {
+        title: 'All Order',
+        route: '/'
+      },
+      {
+        title: 'Delivery Order',
+        route: '/Delivery',
+      },
+      {
+        title: 'Shipping Order',
+        route: '/Shipping'
+      },
+      {
+        title: 'Completion Order',
+        route: '/Complete',
+      },
+    ]} 
+  if (role === "warehouse_staff"){
+    menuItems =  [
+      // {
+      //   title: 'Home',
+      //   route: '/Home'
+      // },
+      {
+        title: 'Inventory',
+        route: '/Inventory',
+      },
+      {
+        title: 'Import Order',
+        route: '/Import Order',
+        submenu: [
+          { title: 'Import Order', route: 'List' },
+          // { title: 'Add Employee ', route: 'Add' },
+          //{ title: 'Edit product', route: 'Edit' }
+        ]
+      },
+      {
+        title: 'Export Order',
+        route: '/Export',
+        submenu: [
+          { title: 'Export Order', route: 'Export' },
+          { title: 'Completetion Order', route: 'Complete' },
+          //{ title: 'Edit product', route: 'Edit' }
+        ]
+      },
+    ]
+  }
   console.log(role)
   // Kiểm tra xem có đang ở route của submenu nào không
-  const isSubRoute = menuItems[role]
+  const isSubRoute = menuItems
     .filter(item => item.submenu)
     .some(item => location.pathname.includes(item.route));
   
   return (
     <div className='w-[20%] min-h-screen border-r-2'>
       <div className='flex flex-col gap-1 pt-1 pl-[5%] pr-[5%] text-[15px]'>
-        {menuItems[role].map((item, index) => (
+        {menuItems.map((item, index) => (
           <MenuItem
             key={index}
             item={item}

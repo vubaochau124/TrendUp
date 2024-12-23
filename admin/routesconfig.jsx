@@ -28,8 +28,16 @@ const routesConfig = {
       { path: '/', element: 'Order' },
       { path: '/shipper', element: 'Order' },
       { path: '/shipper/Delivery', element: 'Delivery' },
-      { path: '/shipper/Shipping', element: 'Status' },
+      { path: '/shipper/Shipping', element: 'Shipping' },
       { path: '/shipper/Complete', element: 'Complete' },
+    ],
+    "Warehouse": [
+      { path: '/', element: 'Order' },
+      { path: '/warehouse_staff', element: 'Inventory' },
+      { path: '/warehouse_staff/Inventory/Edit/:product_id', element: 'Inventory_edit' },
+      { path: '/warehouse_staff/Import/List', element: 'Import' },
+      { path: '/warehouse_staff/Export/Export', element: 'Export' },
+      { path: '/warehouse_staff/Export/Complete', element: 'Export_complete' },
     ],
   };
   

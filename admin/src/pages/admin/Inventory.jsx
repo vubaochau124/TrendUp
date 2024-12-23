@@ -4,7 +4,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify';
 import { backendUrl } from '../../App';
 
-const Inventory = () => {
+const AdminInventory = () => {
   const [inventory, setInventory] = useState([]);
 
   const fetchAllInventory = async () => {
@@ -60,4 +60,4 @@ const Inventory = () => {
   )
 }
 
-export default Inventory 
+export default AdminInventory 

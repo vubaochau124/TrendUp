@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { toast } from 'react-toastify';
-import { backendUrl } from '../App';
+import { backendUrl } from '../../App';
 
 const Customer = () => {
   const [listCustomer, setListCustomer] = useState([]);
