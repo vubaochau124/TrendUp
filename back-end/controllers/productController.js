@@ -65,6 +65,7 @@ const listProduct = async (req, res) => {
 const editProduct = async (req, res) => {
     try {
         const productId = req.params.id;
+        console.log(req.params)
         
         const { name, description, price, category, subCategory, sizes, oldSizes, bestseller } = req.body;
         
@@ -89,21 +90,23 @@ const editProduct = async (req, res) => {
           );
         console.log(imagesUrl);
         const parsedSizes = JSON.parse(sizes);
+        const oldSizes2 = JSON.parse(oldSizes)
         let formatSizes = [];
-        const UnchangeSize = {}
-        for (const s of oldSizes) {
-            sizeName = s.size;
-            sizeQuantity = s.quantity
-            UnchangeSize[sizeName] = sizeQuantity
+        let UnchangeSize = [];
+        console.log(oldSizes2.length)
+        for (let i = 0; i < oldSizes2.length; i++) {
+            UnchangeSize.push(oldSizes2[i].size)
         }
+        console.log(UnchangeSize, parsedSizes, oldSizes2)
         for (const s of parsedSizes) {
             if (UnchangeSize.includes(s)){
-                formatSizes.push({"size": s, "quantity":UnchangeSize.s})
+                const i = UnchangeSize.indexOf(s)
+                formatSizes.push({"size": s, "quantity":oldSizes2[i].quantity})
             } else {
                 formatSizes.push({"size": s, "quantity":0})
             }
         }
-        console.log(parsedSizes)
+        console.log(formatSizes)
         const updatedProduct = await productModel.update(
             {
                 name,
@@ -112,7 +115,7 @@ const editProduct = async (req, res) => {
                 image: imagesUrl, // Ensure image is stored as JSON
                 category,
                 subCategory,
-                sizes: parsedSizes, //: parsedSizes, // Store sizes as an array of objects
+                sizes: formatSizes, //: parsedSizes, // Store sizes as an array of objects
                 bestseller: bestseller === 'true' ? true : false // Convert string to boolean
             },
             {

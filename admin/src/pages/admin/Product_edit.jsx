@@ -68,7 +68,7 @@ const Product_edit = ({token}) => {
       setOldSizes(product.sizes)
       let list_sizes = []
       for (const s of product.sizes){
-        list_sizes.append(s.size)
+        list_sizes.push(s.size)
       }
       setSizes(list_sizes)
 
@@ -112,6 +112,7 @@ const Product_edit = ({token}) => {
     if (image4) formData.append('image4', image4);
 
     // Gửi request với axios
+    console.log(product_id)
     const response = await axios.post(
         backendUrl + `/api/product/edit/${product_id}`,
         formData,

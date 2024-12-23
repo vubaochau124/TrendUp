@@ -44,13 +44,13 @@ const Import_manage = () => {
               key={index}
             >
               <b>{item.import_id}</b>
-              <b>{item.date}</b>
+              <b>{item.date.split("T")[0]}</b>
               <b>{item.amount}</b>
               <a href={item.receipt} download="example.txt">
                 <img 
                   src="https://europipevietnam.com.vn/wp-content/uploads/2021/08/europipevietnam_icon_download-tai-lieu.png" 
                   alt="Download File" 
-                  className="w-32 h-32 cursor-pointer" 
+                  className="w-10 h-10 cursor-pointer" 
                 />
               </a>
             </div>
