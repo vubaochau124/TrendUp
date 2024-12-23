@@ -106,4 +106,14 @@ const getOrderById = async (req, res) => {
     }
 }
 
-export { placeOrder, placeOrderPaypal, getAllOrders, userOrders, updateOrderStatus, getOrderById }
+const getOrdersByPayment = async (req, res) => {
+    try {
+        const orders = await orderModel.findAll({ where: { status: "Completed" } });
+        res.json({ success: true, orders });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export { placeOrder, placeOrderPaypal, getAllOrders, userOrders, updateOrderStatus, getOrderById, getOrdersByPayment };

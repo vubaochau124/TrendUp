@@ -17,6 +17,7 @@ import Category_add from './pages/category_manage/Category_add'
 import Category_edit from './pages/category_manage/Category_edit'
 import Category_product from './pages/category_manage/Category_product.jsx'
 import Inventory from './pages/Inventory'
+import Revenue from './pages/Revenue'
 import Import_manage from './pages/import_manage/Import_manage'
 import Employee_edit from './pages/employee_manage/Employee_edit.jsx'
 import Employee_add from './pages/employee_manage/Employee_add.jsx'
@@ -68,6 +69,8 @@ const App = () => {
                 <Route path='/Category_manage/ListProduct/:id' element={<Category_product token={token}/>} />
 
                 <Route path='/Inventory' element={<Inventory token={token}/>} />
+
+                <Route path='/Revenue' element={<Revenue token={token}/>} />
 
                 <Route path='/Import_manage' element={<Import_manage token={token}/>} />
               </Routes>
