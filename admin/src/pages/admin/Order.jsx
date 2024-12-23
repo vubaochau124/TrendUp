@@ -87,16 +87,10 @@ const AdminOrder = ({ token }) => {
               {currency}
               {order.amount}
             </p>
-            <select onChange={(e) => setOrderStatus(order.id, e.target.value)} value={order.status} className="p-2 font-semibold">
-              <option value="Order Placed">Order Placed</option>
-              <option value="Confirmed">Confirmed</option>
-              <option value="Shipping">Shipping</option>
-              <option value="Completed">Completed</option>
-            </select>
-            <button
-              onClick={() => navigate(`/Order_detail/${order.id}`)}
-              className="text-lg p-1 rounded-md ml-8 w-4 h-full"
-            > </button>
+            <button 
+          className='font-semibold text-center bg-white text-black px-3 py-2 rounded-md text-xs border-2 border-gray-200'>
+            {order.status}
+          </button>
           </div>
         ))}
       </div>

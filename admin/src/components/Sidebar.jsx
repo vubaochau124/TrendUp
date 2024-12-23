@@ -174,10 +174,10 @@ const Sidebar = ({role}) => {
       },
       {
         title: 'Import Order',
-        route: '/Import Order',
+        route: '/Import',
         submenu: [
           { title: 'Import Order', route: 'List' },
-          // { title: 'Add Employee ', route: 'Add' },
+          { title: 'Add Import', route: 'Add' },
           //{ title: 'Edit product', route: 'Edit' }
         ]
       },

@@ -12,7 +12,7 @@ const Import_manage = () => {
     try {
       const response = await axios.get(backendUrl + '/api/import/list');
       if (response.data.success) { 
-        setListImport(response.data.employees);
+        setListImport(response.data.imports);
       } else {
         toast.error(response.data.message);
       }

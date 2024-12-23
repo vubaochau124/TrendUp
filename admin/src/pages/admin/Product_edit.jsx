@@ -73,13 +73,12 @@ const Product_edit = ({token}) => {
       setSizes(list_sizes)
 
       const images = product.image
-      
       if (images[0]) setImage1(images[0])
       if (images[1]) setImage2(images[1])
       if (images[2]) setImage3(images[2])
       if (images[3]) setImage4(images[3])
       
-      console.log(image1, images[0])
+      
     } catch (error) {
       console.error("Error fetching product details:", error)
     }
@@ -87,7 +86,7 @@ const Product_edit = ({token}) => {
   useEffect(() => {
     if (product_id) {
       fetchProductDetails()
-      // console.log(name)
+      console.log(name)
     }
   }, [product_id])
 

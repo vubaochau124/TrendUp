@@ -10,6 +10,7 @@ import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import employeeRouter from './routes/employeeRoute.js';
 import categoryRouter from './routes/categoryRoute.js';
+import importRouter from './routes/importRoute.js';
 
 //app config
 const app = express();
@@ -33,5 +34,6 @@ app.use('/api/order', orderRouter);
 // admin endpoints
 app.use('/api/employee', employeeRouter);
 app.use('/api/category', categoryRouter);
+app.use('/api/import', importRouter);
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));

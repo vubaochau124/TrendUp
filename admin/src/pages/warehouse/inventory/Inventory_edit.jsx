@@ -27,7 +27,7 @@ const Inventory_edit = () => {
           let list_size = {}
           const list_product = response.data.product.sizes
           for (const s of list_product) {
-            list_size[s.size] = 0
+            list_size[s.size] = s.quantity
           }
           setSizes(list_size)
           console.log(list_size);

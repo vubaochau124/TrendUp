@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import { toast } from 'react-toastify';
-import { backendUrl } from '../../../App';
+import { backendUrl, currency } from '../../../App';
 
 const Import = () => {
   const [listImport, setListImport] = useState([]);
@@ -12,7 +12,7 @@ const Import = () => {
     try {
       const response = await axios.get(backendUrl + '/api/import/list');
       if (response.data.success) { 
-        setListImport(response.data.employees);
+        setListImport(response.data.imports);
       } else {
         toast.error(response.data.message);
       }
@@ -44,13 +44,13 @@ const Import = () => {
               key={index}
             >
               <b>{item.import_id}</b>
-              <b>{item.date}</b>
-              <b>{item.amount}</b>
+              <b>{item.date.split("T")[0]}</b>
+              <b>{currency}{item.amount}</b>
               <a href={item.receipt} download="example.txt">
                 <img 
                   src="https://europipevietnam.com.vn/wp-content/uploads/2021/08/europipevietnam_icon_download-tai-lieu.png" 
                   alt="Download File" 
-                  className="w-32 h-32 cursor-pointer" 
+                  className="w-10 h-10 cursor-pointer" 
                 />
               </a>
             </div>

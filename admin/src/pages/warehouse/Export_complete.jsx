@@ -13,7 +13,7 @@ const Export_complete = ({token}) => {
 
   const fetchAllOrders = async () => {
     try {
-      const status = "Exported"
+      const status = "Exported;Shipping;Completed"
       const response = await axios.get(backendUrl + `/api/order/orders_status/${status}`);
       if (response.data.success) {
         console.log("orders: ", response.data.orders);

@@ -74,7 +74,7 @@ const Employee = () => {
                   X
                 </p>
                 <button
-                  onClick={() => navigate(`Admin/Employee_manage/Edit/${item.employee_id}`)}
+                  onClick={() => navigate(`/Employee_manage/Edit/${item.employee_id}`)}
                   className='text-center bg-blue-500 text-white px-3 py-1 rounded-md text-xs'
                 >
                   Edit

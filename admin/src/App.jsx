@@ -38,6 +38,7 @@ import Inventory_edit from './pages/warehouse/inventory/Inventory_edit.jsx'
 import Import from './pages/warehouse/import/Import'
 import Export from './pages/warehouse/Export'
 import Export_complete from './pages/warehouse/Export_complete'
+import ImportAdd from './pages/warehouse/import/Import_add.jsx'
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL
 
@@ -118,6 +119,7 @@ const App = () => {
                               <Route path='/Inventory' element={<WarehouseInventory token={token}/>} />
                               <Route path='/Inventory/Edit/:product_id' element={<Inventory_edit token={token}/>} />
                               <Route path='/Import/List' element={<Import token={token}/>} />
+                              <Route path='/Import/Add' element={<ImportAdd token={token}/>} />
                               <Route path='/Export/Export' element={<Export token={token}/>} />
                               <Route path='/Export/Complete' element={<Export_complete token={token}/>} />
                               

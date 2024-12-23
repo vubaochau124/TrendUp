@@ -71,7 +71,7 @@ const Product = ({ token }) => {
             <p onClick={() => removeProduct(item.id)} className='text-right md:text-center cursor-pointer text-lg'>X</p>
             {/* Nút bấm chuyển hướng */}
             <button
-              onClick={() => navigate(`Admin/Product_manage/Edit/${item.id}`)              } // Chuyển hướng với ID sản phẩm
+              onClick={() => navigate(`/Product_manage/Edit/${item.id}`)              } // Chuyển hướng với ID sản phẩm
               className='text-center bg-blue-500 text-white px-3 py-1 rounded-md'
             >
               Edit
